@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SynchroTower — Cross-Functional Smart Control Tower</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --blue-50: #eff6ff;
+      --blue-100: #dbeafe;
+      --blue-200: #bfdbfe;
+      --blue-300: #93c5fd;
+      --blue-400: #60a5fa;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --blue-700: #1d4ed8;
+      --blue-800: #1e40af;
+      --blue-900: #1e3a8a;
+      --blue-950: #0f1d3d;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --white: #ffffff;
+      --bg-primary: #fafbff;
+      --text-primary: #0c1222;
+      --text-secondary: #475569;
+      --gradient-blue: linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa);
+      --gradient-dark: linear-gradient(135deg, #0f172a, #1e3a8a);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.1);
+      --shadow-xl: 0 20px 60px rgba(15, 23, 42, 0.12);
+      --shadow-blue: 0 8px 30px rgba(37, 99, 235, 0.15);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5 { font-family: 'Space Grotesk', 'Inter', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .container-wide { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(250, 251, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(37, 99, 235, 0.08);
+      transition: all 0.3s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(250, 251, 255, 0.95);
+      box-shadow: 0 1px 12px rgba(15, 23, 42, 0.06);
+    }
+    .navbar-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px; max-width: 1400px; margin: 0 auto; padding: 0 32px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.25rem;
+      color: var(--blue-800);
+    }
+    .nav-logo svg { width: 32px; height: 32px; }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a {
+      padding: 8px 16px; border-radius: var(--radius-sm);
+      font-size: 0.9rem; font-weight: 500; color: var(--slate-600);
+      transition: all 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--blue-700); background: var(--blue-50); }
+    .nav-cta {
+      background: var(--blue-600) !important; color: var(--white) !important;
+      padding: 10px 24px !important; border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important; transition: all 0.2s ease !important;
+    }
+    .nav-cta:hover { background: var(--blue-700) !important; transform: translateY(-1px); box-shadow: var(--shadow-blue); }
+
+    .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: var(--slate-700); margin: 5px 0; transition: all 0.3s; border-radius: 2px; }
+
+    /* ===== HERO ===== */
+    .hero {
+      padding: 160px 0 100px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--blue-50) 0%, var(--bg-primary) 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: -100px; left: -150px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero .container { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); border: 1px solid var(--blue-200);
+      padding: 6px 16px 6px 8px; border-radius: 100px;
+      font-size: 0.825rem; font-weight: 500; color: var(--blue-700);
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-badge-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--blue-500);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      color: var(--text-primary);
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
+    .hero h1 .gradient-text {
+      background: var(--gradient-blue);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      color: var(--text-secondary);
+      max-width: 680px; line-height: 1.7;
+      margin-bottom: 48px;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--blue-600); color: var(--white);
+      padding: 14px 32px; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover { background: var(--blue-700); transform: translateY(-2px); box-shadow: var(--shadow-blue); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); color: var(--blue-700);
+      padding: 14px 32px; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 600; border: 1px solid var(--blue-200);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-secondary:hover { background: var(--blue-50); border-color: var(--blue-300); transform: translateY(-2px); }
+    .btn-arrow { transition: transform 0.2s; }
+    .btn-primary:hover .btn-arrow, .btn-secondary:hover .btn-arrow { transform: translateX(3px); }
+
+    /* ===== HERO VISUAL ===== */
+    .hero-visual {
+      margin-top: 72px;
+      background: var(--white);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      position: relative;
+    }
+    .dashboard-mockup {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      padding: 32px;
+      min-height: 480px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+    }
+    .dash-sidebar {
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-md);
+      padding: 24px 16px;
+    }
+    .dash-sidebar-logo {
+      color: var(--white); font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1rem; margin-bottom: 32px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dash-sidebar-logo span { width: 28px; height: 28px; background: var(--blue-500); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+    .dash-nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 0.85rem;
+      margin-bottom: 4px; transition: all 0.2s;
+    }
+    .dash-nav-item.active { background: rgba(59, 130, 246, 0.2); color: var(--white); }
+    .dash-nav-item svg { width: 18px; height: 18px; opacity: 0.7; }
+    .dash-main { display: flex; flex-direction: column; gap: 16px; }
+    .dash-topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-md);
+    }
+    .dash-topbar-title { color: var(--white); font-weight: 600; font-size: 1.1rem; }
+    .dash-topbar-filters { display: flex; gap: 8px; }
+    .dash-filter {
+      background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+      padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; border: none;
+    }
+    .dash-filter.active { background: var(--blue-500); color: white; }
+    .dash-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .dash-kpi-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-md); padding: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .dash-kpi-label { color: rgba(255,255,255,0.5); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .dash-kpi-value { color: var(--white); font-size: 1.6rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+    .dash-kpi-change { font-size: 0.75rem; margin-top: 6px; }
+    .dash-kpi-change.positive { color: #34d399; }
+    .dash-kpi-change.negative { color: #f87171; }
+    .dash-charts { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; flex: 1; }
+    .dash-chart-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-md); padding: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .dash-chart-title { color: rgba(255,255,255,0.7); font-size: 0.82rem; font-weight: 600; margin-bottom: 16px; }
+    .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+    .chart-bar {
+      flex: 1; border-radius: 4px 4px 0 0;
+      transition: height 0.6s ease;
+    }
+    .chart-bar.b2b { background: var(--blue-400); }
+    .chart-bar.b2c { background: var(--blue-600); }
+    .chart-line-container { height: 120px; position: relative; }
+    .chart-line {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 100%;
+    }
+    .alert-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .alert-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 6px; font-size: 0.75rem;
+      background: rgba(255,255,255,0.04);
+    }
+    .alert-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .alert-dot.red { background: #f87171; }
+    .alert-dot.yellow { background: #fbbf24; }
+    .alert-dot.green { background: #34d399; }
+    .alert-text { color: rgba(255,255,255,0.6); }
+
+    /* ===== SECTION STYLES ===== */
+    .section { padding: 120px 0; }
+    .section-dark {
+      background: var(--slate-900);
+      color: var(--white);
+    }
+    .section-blue {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+      color: var(--white);
+    }
+    .section-light { background: var(--white); }
+    .section-alt { background: var(--blue-50); }
+
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--blue-600); margin-bottom: 16px;
+    }
+    .section-label-dark { color: var(--blue-300); }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .section-subtitle {
+      font-size: 1.1rem; color: var(--text-secondary);
+      max-width: 640px; line-height: 1.7;
+    }
+    .section-subtitle-light { color: rgba(255,255,255,0.7); }
+
+    /* ===== CHALLENGE SECTION ===== */
+    .challenge-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center; margin-top: 64px;
+    }
+    .challenge-visual {
+      position: relative;
+      background: linear-gradient(135deg, var(--blue-50), var(--white));
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      border: 1px solid var(--blue-100);
+    }
+    .comparison-table { width: 100%; }
+    .comparison-row {
+      display: grid; grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 16px; padding: 14px 0;
+      border-bottom: 1px solid var(--blue-100);
+      font-size: 0.88rem;
+    }
+    .comparison-row:last-child { border-bottom: none; }
+    .comparison-header { font-weight: 600; color: var(--blue-800); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .comparison-label { color: var(--text-secondary); font-weight: 500; }
+    .comparison-b2b { color: var(--blue-600); font-weight: 600; }
+    .comparison-b2c { color: var(--blue-800); font-weight: 600; }
+
+    /* ===== PAIN POINTS ===== */
+    .pain-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 24px; margin-top: 64px;
+    }
+    .pain-card {
+      background: var(--white);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .pain-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--gradient-blue); opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .pain-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .pain-card:hover::before { opacity: 1; }
+    .pain-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-md);
+      background: var(--blue-50); display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; color: var(--blue-600);
+    }
+    .pain-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
+    .pain-card p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.65; }
+
+    /* ===== SOLUTION SECTION ===== */
+    .solution-header { text-align: center; max-width: 720px; margin: 0 auto 72px; }
+    .solution-header .section-subtitle { margin: 0 auto; }
+
+    .solution-architecture {
+      background: var(--white);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 80px;
+    }
+    .arch-flow {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      flex-wrap: wrap;
+    }
+    .arch-node {
+      background: var(--blue-50);
+      border: 1px solid var(--blue-200);
+      border-radius: var(--radius-md);
+      padding: 20px 28px; text-align: center;
+      min-width: 160px;
+      transition: all 0.3s;
+    }
+    .arch-node:hover { background: var(--blue-100); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .arch-node.highlight {
+      background: var(--blue-600); border-color: var(--blue-600);
+      color: var(--white);
+    }
+    .arch-node-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .arch-node-label { font-size: 0.82rem; font-weight: 600; }
+    .arch-node-sub { font-size: 0.72rem; opacity: 0.7; margin-top: 4px; }
+    .arch-arrow { color: var(--blue-300); font-size: 1.4rem; }
+
+    /* ===== FEATURES GRID ===== */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-4px); }
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: var(--radius-md);
+      background: rgba(59, 130, 246, 0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; font-size: 1.3rem;
+    }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--white); }
+    .feature-card p { color: rgba(255,255,255,0.6); font-size: 0.9rem; line-height: 1.65; }
+
+    /* ===== KPI SECTION ===== */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 24px; margin-top: 64px;
+    }
+    .kpi-card {
+      text-align: center;
+      padding: 40px 24px;
+      background: var(--white);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-lg);
+      transition: all 0.3s;
+    }
+    .kpi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .kpi-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem; font-weight: 800;
+      background: var(--gradient-blue);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .kpi-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+    .kpi-baseline {
+      font-size: 0.75rem; color: var(--slate-400); margin-top: 8px;
+      padding-top: 12px; border-top: 1px solid var(--blue-100);
+    }
+
+    /* ===== DATA SOURCES ===== */
+    .data-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center; margin-top: 64px;
+    }
+    .data-sources-list { display: flex; flex-direction: column; gap: 16px; }
+    .data-source-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px; background: var(--white);
+      border: 1px solid var(--blue-100); border-radius: var(--radius-md);
+      transition: all 0.3s;
+    }
+    .data-source-item:hover { box-shadow: var(--shadow-md); transform: translateX(4px); }
+    .data-source-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--blue-50);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--blue-600); flex-shrink: 0;
+    }
+    .data-source-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 4px; }
+    .data-source-desc { font-size: 0.82rem; color: var(--text-secondary); }
+
+    .data-visual {
+      background: linear-gradient(135deg, var(--blue-50), var(--white));
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      position: relative;
+    }
+    .data-hub-center {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: var(--gradient-blue);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto; position: relative; z-index: 2;
+      box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+    }
+    .data-hub-label { color: white; font-weight: 700; font-size: 0.85rem; text-align: center; }
+    .data-orbits {
+      position: relative; width: 280px; height: 280px;
+      margin: 0 auto;
+    }
+    .data-orbit {
+      position: absolute; border: 1px dashed var(--blue-200);
+      border-radius: 50%; 
+    }
+    .data-orbit-1 { width: 200px; height: 200px; top: 40px; left: 40px; }
+    .data-orbit-2 { width: 280px; height: 280px; top: 0; left: 0; }
+    .orbit-node {
+      position: absolute; width: 48px; height: 48px; border-radius: 50%;
+      background: var(--white); border: 2px solid var(--blue-200);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 600; color: var(--blue-700);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ===== SECURITY ===== */
+    .security-features {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 32px; margin-top: 64px;
+    }
+    .security-item { text-align: center; }
+    .security-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(59, 130, 246, 0.15);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 1.5rem;
+    }
+    .security-item h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--white); }
+    .security-item p { color: rgba(255,255,255,0.6); font-size: 0.88rem; line-height: 1.6; }
+
+    /* ===== BENEFITS ===== */
+    .benefits-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; margin-top: 64px;
+    }
+    .benefit-card {
+      background: var(--white);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      transition: all 0.3s;
+    }
+    .benefit-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .benefit-emoji { font-size: 2rem; margin-bottom: 16px; }
+    .benefit-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .benefit-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.65; }
+
+    /* ===== TIMELINE ===== */
+    .timeline-container { margin-top: 64px; position: relative; }
+    .timeline-line {
+      position: absolute; top: 32px; left: 0; right: 0; height: 2px;
+      background: var(--blue-200);
+    }
+    .timeline-line-fill {
+      height: 100%; width: 33%;
+      background: var(--gradient-blue);
+      border-radius: 2px;
+    }
+    .timeline-steps {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 24px; position: relative;
+    }
+    .timeline-step { text-align: center; padding-top: 56px; }
+    .timeline-dot {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--white); border: 3px solid var(--blue-300);
+      position: absolute; top: 23px; left: 50%; transform: translateX(-50%);
+      z-index: 1;
+    }
+    .timeline-step.active .timeline-dot { background: var(--blue-600); border-color: var(--blue-600); box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15); }
+    .timeline-step { position: relative; }
+    .timeline-phase {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--blue-500); font-weight: 600; margin-bottom: 8px;
+    }
+    .timeline-step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .timeline-step p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ===== TEAM ===== */
+    .team-roles {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px; margin-top: 64px;
+    }
+    .team-role {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      transition: all 0.3s;
+    }
+    .team-role:hover { background: rgba(255,255,255,0.1); }
+    .team-role-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(59, 130, 246, 0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; font-size: 1.1rem;
+    }
+    .team-role h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: var(--white); }
+    .team-role p { font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      padding: 120px 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
+    }
+    .cta-section .container { position: relative; z-index: 1; }
+    .cta-section h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; color: var(--white);
+      margin-bottom: 20px;
+    }
+    .cta-section p {
+      color: rgba(255,255,255,0.7);
+      font-size: 1.1rem; max-width: 560px; margin: 0 auto 40px;
+    }
+    .cta-buttons { display: flex; justify-content: center; gap: 16px; }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); color: var(--blue-700);
+      padding: 14px 32px; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,255,255,0.2); }
+    .btn-outline-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--white);
+      padding: 14px 32px; border-radius: var(--radius-sm);
+      font-size: 0.95rem; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--slate-900); color: rgba(255,255,255,0.5);
+      padding: 64px 0 32px; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 48px;
+    }
+    .footer-brand h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem; font-weight: 700; color: var(--white); margin-bottom: 12px;
+    }
+    .footer-brand p { font-size: 0.88rem; line-height: 1.6; max-width: 300px; }
+    .footer-col h4 {
+      font-size: 0.82rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: rgba(255,255,255,0.8); margin-bottom: 16px;
+    }
+    .footer-col a {
+      display: block; font-size: 0.88rem; margin-bottom: 10px;
+      color: rgba(255,255,255,0.4); transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--blue-400); }
+    .footer-bottom {
+      padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: space-between; font-size: 0.82rem;
+    }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: rgba(255,255,255,0.4); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--blue-400); }
+
+    /* ===== ANIMATIONS ===== */
+    .fade-in {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in-delay-1 { transition-delay: 0.1s; }
+    .fade-in-delay-2 { transition-delay: 0.2s; }
+    .fade-in-delay-3 { transition-delay: 0.3s; }
+    .fade-in-delay-4 { transition-delay: 0.4s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .dashboard-mockup { grid-template-columns: 1fr; }
+      .dash-sidebar { display: none; }
+      .dash-cards { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .challenge-grid, .data-grid { grid-template-columns: 1fr; }
+      .timeline-steps { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+      .timeline-line { display: none; }
+      .timeline-dot { display: none; }
+      .timeline-step { padding-top: 0; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .hero { padding: 130px 0 60px; }
+      .section { padding: 80px 0; }
+      .pain-grid, .features-grid, .security-features, .benefits-grid, .team-roles {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .dash-cards { grid-template-columns: 1fr 1fr; }
+      .dash-charts { grid-template-columns: 1fr; }
+      .arch-flow { flex-direction: column; }
+      .arch-arrow { transform: rotate(90deg); }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; }
+      .hero-actions { flex-direction: column; }
+      .cta-buttons { flex-direction: column; align-items: center; }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--slate-100); }
+    ::-webkit-scrollbar-thumb { background: var(--blue-300); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--blue-400); }
+
+    /* === SVG chart === */
+    .svg-chart { width: 100%; height: 120px; }
+    .svg-chart path { fill: none; stroke-width: 2; stroke-linecap: round; }
+    .svg-chart .line-forecast { stroke: var(--blue-400); }
+    .svg-chart .line-safety { stroke: #f59e0b; stroke-dasharray: 6 4; }
+    .svg-chart .area-forecast { fill: rgba(59, 130, 246, 0.1); stroke: none; }
+
+    /* ===== ERD DIAGRAM ===== */
+    .erd-section {
+      padding: 80px 0 120px;
+      background: var(--white);
+    }
+    .erd-header { text-align: center; max-width: 680px; margin: 0 auto 56px; }
+    .erd-wrapper {
+      background: linear-gradient(135deg, var(--blue-50) 0%, var(--white) 50%, var(--blue-50) 100%);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-xl);
+      padding: 48px 24px;
+      box-shadow: var(--shadow-md);
+      overflow-x: auto;
+    }
+    .erd-canvas {
+      position: relative;
+      min-width: 960px;
+      min-height: 640px;
+      margin: 0 auto;
+      max-width: 1100px;
+    }
+    .erd-entity {
+      position: absolute;
+      background: var(--white);
+      border: 2px solid var(--blue-200);
+      border-radius: var(--radius-md);
+      min-width: 170px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+    .erd-entity:hover {
+      border-color: var(--blue-400);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-3px);
+    }
+    .erd-entity-header {
+      background: var(--blue-600);
+      color: var(--white);
+      padding: 10px 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .erd-entity-header.accent-teal { background: #0d9488; }
+    .erd-entity-header.accent-purple { background: #7c3aed; }
+    .erd-entity-header.accent-amber { background: #d97706; }
+    .erd-entity-header.accent-rose { background: #e11d48; }
+    .erd-entity-header.accent-emerald { background: #059669; }
+    .erd-entity-header.accent-indigo { background: #4f46e5; }
+    .erd-entity-header-icon { font-size: 1rem; }
+    .erd-entity-body { padding: 12px 16px; }
+    .erd-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      font-size: 0.78rem;
+      color: var(--slate-600);
+      border-bottom: 1px solid var(--slate-100);
+    }
+    .erd-field:last-child { border-bottom: none; }
+    .erd-field-key {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .erd-pk { background: #fef3c7; color: #92400e; }
+    .erd-fk { background: #dbeafe; color: #1e40af; }
+    .erd-field-name { font-weight: 600; color: var(--slate-700); }
+    .erd-field-type { color: var(--slate-400); font-size: 0.7rem; margin-left: auto; font-style: italic; }
+
+    .erd-lines {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .erd-lines line, .erd-lines path {
+      stroke: var(--blue-300);
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .erd-lines .rel-marker {
+      fill: var(--blue-400);
+    }
+    .erd-legend {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .erd-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--slate-500);
+    }
+    .erd-legend-pk {
+      display: inline-block;
+      background: #fef3c7; color: #92400e;
+      font-size: 0.6rem; font-weight: 700;
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .erd-legend-fk {
+      display: inline-block;
+      background: #dbeafe; color: #1e40af;
+      font-size: 0.6rem; font-weight: 700;
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .erd-legend-line {
+      width: 28px; height: 2px;
+      background: var(--blue-300);
+      border-radius: 1px;
+    }
+    .erd-legend-line-dash {
+      width: 28px; height: 0;
+      border-top: 2px dashed var(--blue-300);
+    }
+
+    @media (max-width: 768px) {
+      .erd-wrapper { padding: 24px 12px; }
+      .erd-canvas { min-height: 500px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="nav-logo">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="#2563eb"/>
+          <path d="M8 16L14 10V14H18V10L24 16L18 22V18H14V22L8 16Z" fill="white"/>
+        </svg>
+        SynchroTower
+      </a>
+      <div class="nav-links">
+        <a href="#challenge">Challenge</a>
+        <a href="#solution">Solution</a>
+        <a href="#datamodel">Data Model</a>
+        <a href="#features">Features</a>
+        <a href="#metrics">Metrics</a>
+        <a href="#data">Data Sources</a>
+        <a href="#timeline">Roadmap</a>
+        <a href="#team">Team</a>
+        <a href="#cta" class="nav-cta">Get Started</a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-badge fade-in">
+        <span class="hero-badge-dot"></span>
+        IoT Data Hackathon 2026 — AS Watson Industries
+      </div>
+      <h1 class="fade-in fade-in-delay-1">
+        One Control Tower for<br><span class="gradient-text">Shared Decisions</span>
+      </h1>
+      <p class="hero-subtitle fade-in fade-in-delay-2">
+        SynchroTower is a centralized, real-time control tower backed by a data middle platform and AI decision engine — transforming warehouse operations for the B2B2C era.
+      </p>
+      <div class="hero-actions fade-in fade-in-delay-3">
+        <a href="#solution" class="btn-primary">
+          Explore Solution
+          <svg class="btn-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#challenge" class="btn-secondary">
+          Read the Challenge
+          <svg class="btn-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Dashboard Mockup -->
+      <div class="hero-visual fade-in fade-in-delay-4">
+        <div class="dashboard-mockup">
+          <div class="dash-sidebar">
+            <div class="dash-sidebar-logo">
+              <span>ST</span> SynchroTower
+            </div>
+            <div class="dash-nav-item active">
+              <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="1" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="10" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+              Overview
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 18 18" fill="none"><path d="M1 13l4-4 3 3 4-6 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Forecasting
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="5" width="16" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M1 9h16M5 5V1M13 5V1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Inventory
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 2v14M12 2v14M2 6h14M2 12h14" stroke="currentColor" stroke-width="1.5" opacity="0.5"/></svg>
+              Warehouse
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Alerts
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 18 18" fill="none"><path d="M3 14l3-3 2 2 4-5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Space Planning
+            </div>
+          </div>
+          <div class="dash-main">
+            <div class="dash-topbar">
+              <span class="dash-topbar-title">Control Tower Dashboard</span>
+              <div class="dash-topbar-filters">
+                <span class="dash-filter active">7 Days</span>
+                <span class="dash-filter">14 Days</span>
+                <span class="dash-filter">30 Days</span>
+              </div>
+            </div>
+            <div class="dash-cards">
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-label">Service Level</div>
+                <div class="dash-kpi-value">97.2%</div>
+                <div class="dash-kpi-change positive">↑ 3.1% from target</div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-label">Stockout Rate</div>
+                <div class="dash-kpi-value">2.4%</div>
+                <div class="dash-kpi-change positive">↓ 30% reduced</div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-label">Inventory Turns</div>
+                <div class="dash-kpi-value">8.6x</div>
+                <div class="dash-kpi-change positive">↑ 25% improved</div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-label">Space Utilization</div>
+                <div class="dash-kpi-value">84%</div>
+                <div class="dash-kpi-change positive">Optimal range</div>
+              </div>
+            </div>
+            <div class="dash-charts">
+              <div class="dash-chart-card">
+                <div class="dash-chart-title">Demand Forecast — B2B vs B2C (7-Day)</div>
+                <div class="chart-bars" id="demandChart">
+                  <!-- Bars injected by JS -->
+                </div>
+              </div>
+              <div class="dash-chart-card">
+                <div class="dash-chart-title">Active Exceptions</div>
+                <div class="alert-list">
+                  <div class="alert-item">
+                    <span class="alert-dot red"></span>
+                    <span class="alert-text">SKU-1042 stockout risk in 3 days</span>
+                  </div>
+                  <div class="alert-item">
+                    <span class="alert-dot yellow"></span>
+                    <span class="alert-text">Zone B capacity 92% — overflow risk</span>
+                  </div>
+                  <div class="alert-item">
+                    <span class="alert-dot yellow"></span>
+                    <span class="alert-text">Supplier delay: PO-8891 +2 days</span>
+                  </div>
+                  <div class="alert-item">
+                    <span class="alert-dot green"></span>
+                    <span class="alert-text">Production batch #447 completed</span>
+                  </div>
+                  <div class="alert-item">
+                    <span class="alert-dot green"></span>
+                    <span class="alert-text">B2C promo forecast updated</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHALLENGE ===== -->
+  <section class="section section-light" id="challenge">
+    <div class="container">
+      <div class="fade-in">
+        <span class="section-label">The Challenge</span>
+        <h2 class="section-title">Warehouse Transformation<br>for B2B2C</h2>
+        <p class="section-subtitle">The move to B2B2C changes the shape of demand. Volatility is amplified, SKU portfolios explode, and the same warehouse must handle both bulk pallets and piece-level picking.</p>
+      </div>
+      <div class="challenge-grid">
+        <div class="fade-in">
+          <h3 style="font-size: 1.3rem; margin-bottom: 20px;">Why It Matters Now</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7; font-size: 0.95rem;">
+            B2C demand is sensitive to promotions, holidays, and external drivers such as weather. This volatility is amplified when the SKU portfolio grows rapidly, because planners must make frequent decisions across thousands of SKU-channel combinations.
+          </p>
+          <p style="color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7; font-size: 0.95rem;">
+            Multiple pack-sizes complicate FIFO execution, location assignment, and returns quarantine. Even a good forecast is insufficient if the organization cannot rapidly translate insights into coordinated actions.
+          </p>
+          <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+            This challenge requires not only analytics, but also <strong>collaboration mechanics</strong>: a shared data layer, shared metrics, shared alerts, and an auditable decision workflow.
+          </p>
+        </div>
+        <div class="challenge-visual fade-in">
+          <div class="comparison-table">
+            <div class="comparison-row">
+              <div class="comparison-header">Dimension</div>
+              <div class="comparison-header">B2B</div>
+              <div class="comparison-header">B2C</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-label">Demand Pattern</div>
+              <div class="comparison-b2b">Planned, bulk</div>
+              <div class="comparison-b2c">Volatile, seasonal</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-label">Order Size</div>
+              <div class="comparison-b2b">Pallet / case</div>
+              <div class="comparison-b2c">Piece-level</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-label">Frequency</div>
+              <div class="comparison-b2b">Weekly / monthly</div>
+              <div class="comparison-b2c">Daily / hourly</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-label">Returns</div>
+              <div class="comparison-b2b">Rare</div>
+              <div class="comparison-b2c">Frequent</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-label">SLA</div>
+              <div class="comparison-b2b">Days</div>
+              <div class="comparison-b2c">Hours</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-label">Pack Variety</div>
+              <div class="comparison-b2b">Standard cases</div>
+              <div class="comparison-b2c">Multi-format</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAIN POINTS ===== -->
+  <section class="section section-alt" id="painpoints">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto 0;">
+        <span class="section-label">Root Causes</span>
+        <h2 class="section-title">Current Pain Points</h2>
+        <p class="section-subtitle" style="margin:0 auto;">The most critical bottleneck is not the lack of effort — it is the absence of a shared operational truth and a shared decision loop.</p>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-card fade-in">
+          <div class="pain-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3>Fragmented Data Sources</h3>
+          <p>When procurement, production, shipping, and warehouse each maintain different spreadsheets, the organization spends time reconciling numbers rather than acting. By the time a decision is aligned, the situation has already changed.</p>
+        </div>
+        <div class="pain-card fade-in fade-in-delay-1">
+          <div class="pain-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <h3>Static Safety Stock</h3>
+          <p>Fixed safety stock formulas do not scale when SKU counts triple and demand volatility increases. The right inventory buffer depends on forecast uncertainty, lead-time variability, and channel-specific service targets — not a static parameter revised too slowly.</p>
+        </div>
+        <div class="pain-card fade-in fade-in-delay-2">
+          <div class="pain-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/><circle cx="12" cy="14" r="1"/></svg>
+          </div>
+          <h3>Warehouse Space Constraints</h3>
+          <p>Limited capacity becomes fragile under high SKU variety, mixed order profiles, and returns handling. Without a forward-looking capacity view, reactive moves like temporary overflow and emergency re-slotting increase congestion.</p>
+        </div>
+        <div class="pain-card fade-in fade-in-delay-3">
+          <div class="pain-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <h3>Slow Exception Diagnosis</h3>
+          <p>Root causes may sit in supplier lead time, production sequencing, inbound scheduling, putaway capacity, or outbound dispatch cutoffs. Without end-to-end visibility and structured case management, escalation is manual and slow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SOLUTION ===== -->
+  <section class="section section-light" id="solution">
+    <div class="container">
+      <div class="solution-header fade-in">
+        <span class="section-label">The Solution</span>
+        <h2 class="section-title">Introducing SynchroTower</h2>
+        <p class="section-subtitle">A cross-functional control tower combining a real-time dashboard, AI-driven recommendation layer, and workflow mechanism — making every department operate from the same operational truth.</p>
+      </div>
+
+      <!-- Architecture Flow -->
+      <div class="solution-architecture fade-in">
+        <div class="arch-flow">
+          <div class="arch-node">
+            <div class="arch-node-icon">📦</div>
+            <div class="arch-node-label">Source Systems</div>
+            <div class="arch-node-sub">ERP · WMS · TMS</div>
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">
+            <div class="arch-node-icon">🔗</div>
+            <div class="arch-node-label">Data Middle Platform</div>
+            <div class="arch-node-sub">Unified Data Layer</div>
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node highlight">
+            <div class="arch-node-icon">🧠</div>
+            <div class="arch-node-label">AI Decision Engine</div>
+            <div class="arch-node-sub">Forecast · Optimize · Alert</div>
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">
+            <div class="arch-node-icon">📊</div>
+            <div class="arch-node-label">Control Tower</div>
+            <div class="arch-node-sub">Dashboard · Workflow</div>
+          </div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-node">
+            <div class="arch-node-icon">✅</div>
+            <div class="arch-node-label">Coordinated Actions</div>
+            <div class="arch-node-sub">Owned · Trackable</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ERD DIAGRAM ===== -->
+  <section class="erd-section" id="datamodel">
+    <div class="container">
+      <div class="erd-header fade-in">
+        <span class="section-label">Data Middle Platform</span>
+        <h2 class="section-title">Simplified Data Model</h2>
+        <p class="section-subtitle" style="margin:0 auto;">The unified data layer standardises SKU master data with pack-size conversions and physical dimensions, enabling end-to-end traceability across the supply chain.</p>
+      </div>
+      <div class="erd-wrapper fade-in">
+        <div class="erd-canvas" id="erdCanvas">
+          <!-- SVG relationship lines (drawn by JS) -->
+          <svg class="erd-lines" id="erdLines"></svg>
+
+          <!-- 1. SKU Master (center-top) -->
+          <div class="erd-entity" id="erd-sku" style="top: 20px; left: 400px;">
+            <div class="erd-entity-header">
+              <span class="erd-entity-header-icon">📦</span> SKU Master
+            </div>
+            <div class="erd-entity-body">
+              <div class="erd-field"><span class="erd-field-key erd-pk">PK</span><span class="erd-field-name">sku_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">sku_name</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">category</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">brand</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">status</span><span class="erd-field-type">enum</span></div>
+              <div class="erd-field"><span class="erd-field-name">channel</span><span class="erd-field-type">B2B|B2C</span></div>
+            </div>
+          </div>
+
+          <!-- 2. Pack Size (right of SKU) -->
+          <div class="erd-entity" id="erd-pack" style="top: 20px; left: 700px;">
+            <div class="erd-entity-header accent-teal">
+              <span class="erd-entity-header-icon">📐</span> Pack Size
+            </div>
+            <div class="erd-entity-body">
+              <div class="erd-field"><span class="erd-field-key erd-pk">PK</span><span class="erd-field-name">pack_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">sku_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">pack_type</span><span class="erd-field-type">carton|inner|pc</span></div>
+              <div class="erd-field"><span class="erd-field-name">qty_per_pack</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">length_cm</span><span class="erd-field-type">decimal</span></div>
+              <div class="erd-field"><span class="erd-field-name">width_cm</span><span class="erd-field-type">decimal</span></div>
+              <div class="erd-field"><span class="erd-field-name">height_cm</span><span class="erd-field-type">decimal</span></div>
+              <div class="erd-field"><span class="erd-field-name">weight_kg</span><span class="erd-field-type">decimal</span></div>
+            </div>
+          </div>
+
+          <!-- 3. Purchase Order (left, row 2) -->
+          <div class="erd-entity" id="erd-po" style="top: 240px; left: 30px;">
+            <div class="erd-entity-header accent-purple">
+              <span class="erd-entity-header-icon">🛒</span> Purchase Order
+            </div>
+            <div class="erd-entity-body">
+              <div class="erd-field"><span class="erd-field-key erd-pk">PK</span><span class="erd-field-name">po_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">sku_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">supplier_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">order_qty</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">order_date</span><span class="erd-field-type">date</span></div>
+              <div class="erd-field"><span class="erd-field-name">expected_arrival</span><span class="erd-field-type">date</span></div>
+              <div class="erd-field"><span class="erd-field-name">status</span><span class="erd-field-type">enum</span></div>
+            </div>
+          </div>
+
+          <!-- 4. Production Order (center-left, row 2) -->
+          <div class="erd-entity" id="erd-prod" style="top: 240px; left: 280px;">
+            <div class="erd-entity-header accent-amber">
+              <span class="erd-entity-header-icon">🏭</span> Production Order
+            </div>
+            <div class="erd-entity-body">
+              <div class="erd-field"><span class="erd-field-key erd-pk">PK</span><span class="erd-field-name">prod_order_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">sku_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">planned_qty</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">actual_qty</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">scheduled_date</span><span class="erd-field-type">date</span></div>
+              <div class="erd-field"><span class="erd-field-name">line_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">status</span><span class="erd-field-type">enum</span></div>
+            </div>
+          </div>
+
+          <!-- 5. Inventory Position (center-right, row 2) -->
+          <div class="erd-entity" id="erd-inv" style="top: 240px; left: 540px;">
+            <div class="erd-entity-header accent-rose">
+              <span class="erd-entity-header-icon">📊</span> Inventory Position
+            </div>
+            <div class="erd-entity-body">
+              <div class="erd-field"><span class="erd-field-key erd-pk">PK</span><span class="erd-field-name">inventory_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">sku_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">pack_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">location_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">zone</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">qty_on_hand</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">qty_reserved</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">safety_stock</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">last_updated</span><span class="erd-field-type">timestamp</span></div>
+            </div>
+          </div>
+
+          <!-- 6. Warehouse Events (right, row 3) -->
+          <div class="erd-entity" id="erd-whe" style="top: 460px; left: 180px;">
+            <div class="erd-entity-header accent-emerald">
+              <span class="erd-entity-header-icon">⏱️</span> Warehouse Events
+            </div>
+            <div class="erd-entity-body">
+              <div class="erd-field"><span class="erd-field-key erd-pk">PK</span><span class="erd-field-name">event_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">inventory_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">sku_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">event_type</span><span class="erd-field-type">receive|putaway|pick|ship</span></div>
+              <div class="erd-field"><span class="erd-field-name">timestamp</span><span class="erd-field-type">timestamp</span></div>
+              <div class="erd-field"><span class="erd-field-name">quantity</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">operator_id</span><span class="erd-field-type">varchar</span></div>
+            </div>
+          </div>
+
+          <!-- 7. Shipment Plan (far right, row 3) -->
+          <div class="erd-entity" id="erd-ship" style="top: 460px; left: 540px;">
+            <div class="erd-entity-header accent-indigo">
+              <span class="erd-entity-header-icon">🚛</span> Shipment Plan
+            </div>
+            <div class="erd-entity-body">
+              <div class="erd-field"><span class="erd-field-key erd-pk">PK</span><span class="erd-field-name">shipment_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">po_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-key erd-fk">FK</span><span class="erd-field-name">sku_id</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">direction</span><span class="erd-field-type">inbound|outbound</span></div>
+              <div class="erd-field"><span class="erd-field-name">carrier</span><span class="erd-field-type">varchar</span></div>
+              <div class="erd-field"><span class="erd-field-name">scheduled_date</span><span class="erd-field-type">date</span></div>
+              <div class="erd-field"><span class="erd-field-name">quantity</span><span class="erd-field-type">int</span></div>
+              <div class="erd-field"><span class="erd-field-name">status</span><span class="erd-field-type">enum</span></div>
+            </div>
+          </div>
+
+        </div><!-- /erd-canvas -->
+      </div><!-- /erd-wrapper -->
+
+      <div class="erd-legend fade-in">
+        <div class="erd-legend-item">
+          <span class="erd-legend-pk">PK</span> Primary Key
+        </div>
+        <div class="erd-legend-item">
+          <span class="erd-legend-fk">FK</span> Foreign Key
+        </div>
+        <div class="erd-legend-item">
+          <span class="erd-legend-line"></span> One-to-Many
+        </div>
+        <div class="erd-legend-item">
+          <span class="erd-legend-line-dash"></span> References
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <section class="section section-dark" id="features">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto 64px;">
+        <span class="section-label section-label-dark">Core Capabilities</span>
+        <h2 class="section-title" style="color:var(--white);">AI-Powered Modules</h2>
+        <p class="section-subtitle section-subtitle-light" style="margin:0 auto;">
+          From demand sensing to space forecasting, SynchroTower converts data into coordinated, executable recommendations.
+        </p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card fade-in">
+          <div class="feature-icon">📈</div>
+          <h3>Demand Sensing</h3>
+          <p>Near-term 7-day demand sensing blending historical data with calendar effects and external drivers like weather — especially relevant for beverages where temperature impacts demand.</p>
+        </div>
+        <div class="feature-card fade-in fade-in-delay-1">
+          <div class="feature-icon">🎯</div>
+          <h3>Dynamic Safety Stock</h3>
+          <p>Adaptive safety stock targets per SKU and channel that adjust as the model detects higher uncertainty from promotions, weather spikes, or supply variability. No more static parameters.</p>
+        </div>
+        <div class="feature-card fade-in fade-in-delay-2">
+          <div class="feature-icon">🏗️</div>
+          <h3>Space Forecasting</h3>
+          <p>Converts projected inventory into space consumption using SKU dimensions and storage-type mapping. Produces forward-looking capacity pressure views by zone with early warnings.</p>
+        </div>
+        <div class="feature-card fade-in fade-in-delay-3">
+          <div class="feature-icon">🔄</div>
+          <h3>Coordinated Recommendations</h3>
+          <p>Cross-functional recommendations reflecting procurement, production, and warehouse constraints. Generated as "cases" with explanations, suggested actions by owner, and expected impact.</p>
+        </div>
+        <div class="feature-card fade-in fade-in-delay-4">
+          <div class="feature-icon">🚨</div>
+          <h3>Exception Alerting & RCA</h3>
+          <p>Continuous monitoring for stockouts, inbound delays, and space saturation. Traces event timelines to attribute root causes — transparent, rule-based logic upgradeable to ML classification.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">📋</div>
+          <h3>Unified Data Layer</h3>
+          <p>Standardized SKU master data with pack-size conversion and physical dimensions. Creates an event timeline for end-to-end traceability and faster root-cause diagnosis across the chain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== METRICS ===== -->
+  <section class="section section-light" id="metrics">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto;">
+        <span class="section-label">Success Metrics</span>
+        <h2 class="section-title">Measurable Impact</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Clear targets that prove SynchroTower delivers tangible business value across multiple operational dimensions.</p>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card fade-in">
+          <div class="kpi-number" data-target="30" data-suffix="%">0%</div>
+          <div class="kpi-label">Reduction in Stockouts</div>
+          <div class="kpi-baseline">Priority SKUs — B2B &amp; B2C</div>
+        </div>
+        <div class="kpi-card fade-in fade-in-delay-1">
+          <div class="kpi-number" data-target="25" data-suffix="%">0%</div>
+          <div class="kpi-label">Improved Inventory Turnover</div>
+          <div class="kpi-baseline">Dynamic safety stock optimization</div>
+        </div>
+        <div class="kpi-card fade-in fade-in-delay-2">
+          <div class="kpi-number" data-target="80" data-suffix="%">0%</div>
+          <div class="kpi-label">Faster Decision Cycle</div>
+          <div class="kpi-baseline">From days to hours</div>
+        </div>
+        <div class="kpi-card fade-in fade-in-delay-3">
+          <div class="kpi-number" data-target="40" data-suffix="%">0%</div>
+          <div class="kpi-label">Reduced Space Congestion</div>
+          <div class="kpi-baseline">Proactive capacity management</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DATA SOURCES ===== -->
+  <section class="section section-alt" id="data">
+    <div class="container">
+      <div class="fade-in">
+        <span class="section-label">Data Integration</span>
+        <h2 class="section-title">Connected Data Sources</h2>
+        <p class="section-subtitle">SynchroTower integrates internal operational data with external open-data sources for comprehensive decision intelligence.</p>
+      </div>
+      <div class="data-grid">
+        <div class="data-sources-list fade-in">
+          <div class="data-source-item">
+            <div class="data-source-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg>
+            </div>
+            <div>
+              <div class="data-source-title">Procurement Orders</div>
+              <div class="data-source-desc">Purchase orders, expected arrivals, and supplier lead-time data</div>
+            </div>
+          </div>
+          <div class="data-source-item">
+            <div class="data-source-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4V20a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9.6 18.6l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5.4 9.6l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1.4 1.81l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9H20a2 2 0 0 1 0 4h-.09z"/></svg>
+            </div>
+            <div>
+              <div class="data-source-title">Production Plans</div>
+              <div class="data-source-desc">Production schedules, capacity constraints, and sequencing data</div>
+            </div>
+          </div>
+          <div class="data-source-item">
+            <div class="data-source-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27,6.96 12,12.01 20.73,6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <div>
+              <div class="data-source-title">Inventory & Warehouse Events</div>
+              <div class="data-source-desc">Snapshots, transactions, receive/putaway/pick/ship timestamps</div>
+            </div>
+          </div>
+          <div class="data-source-item">
+            <div class="data-source-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-4V3L4 14h6v7z"/></svg>
+            </div>
+            <div>
+              <div class="data-source-title">Shipping Schedules</div>
+              <div class="data-source-desc">Inbound/outbound dispatch plans and carrier appointments</div>
+            </div>
+          </div>
+          <div class="data-source-item">
+            <div class="data-source-icon" style="background: #fff7ed; color: #ea580c;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div>
+              <div class="data-source-title">HKO Open Data <span style="background:#fff7ed;color:#ea580c;font-size:0.68rem;padding:2px 8px;border-radius:100px;font-weight:600;margin-left:6px;">External</span></div>
+              <div class="data-source-desc">Hong Kong Observatory weather data for demand sensing and disruption signals</div>
+            </div>
+          </div>
+          <div class="data-source-item">
+            <div class="data-source-icon" style="background: #f0fdf4; color: #16a34a;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+            </div>
+            <div>
+              <div class="data-source-title">DATA.GOV.HK <span style="background:#f0fdf4;color:#16a34a;font-size:0.68rem;padding:2px 8px;border-radius:100px;font-weight:600;margin-left:6px;">External</span></div>
+              <div class="data-source-desc">Public holiday calendars impacting B2C demand and warehouse workloads</div>
+            </div>
+          </div>
+        </div>
+        <div class="data-visual fade-in">
+          <div class="data-orbits">
+            <div class="data-orbit data-orbit-2"></div>
+            <div class="data-orbit data-orbit-1"></div>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+              <div class="data-hub-center">
+                <div class="data-hub-label">Data<br>Hub</div>
+              </div>
+            </div>
+            <!-- orbit nodes -->
+            <div class="orbit-node" style="top: 10px; left: 50%; transform: translateX(-50%);">PO</div>
+            <div class="orbit-node" style="top: 50%; right: -5px; transform: translateY(-50%);">WMS</div>
+            <div class="orbit-node" style="bottom: 10px; left: 50%; transform: translateX(-50%);">TMS</div>
+            <div class="orbit-node" style="top: 50%; left: -5px; transform: translateY(-50%);">MES</div>
+            <div class="orbit-node" style="top: 30px; right: 10px;">HKO</div>
+            <div class="orbit-node" style="bottom: 30px; left: 10px;">GOV</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECURITY ===== -->
+  <section class="section section-blue" id="security">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto;">
+        <span class="section-label" style="color:rgba(255,255,255,0.8);">Trust & Governance</span>
+        <h2 class="section-title" style="color:var(--white);">Secure by Design</h2>
+        <p class="section-subtitle section-subtitle-light" style="margin:0 auto;">
+          Built with Hong Kong PDPO considerations, role-based access, and full audit trails from day one.
+        </p>
+      </div>
+      <div class="security-features">
+        <div class="security-item fade-in">
+          <div class="security-icon">🔐</div>
+          <h3>Role-Based Access Control</h3>
+          <p>Each department sees only necessary data while enabling management-level oversight across the entire control tower.</p>
+        </div>
+        <div class="security-item fade-in fade-in-delay-1">
+          <div class="security-icon">🛡️</div>
+          <h3>Encryption & Privacy</h3>
+          <p>Data encrypted in transit and at rest. Anonymization and pseudonymization supported. Data minimization by default in dashboards.</p>
+        </div>
+        <div class="security-item fade-in fade-in-delay-2">
+          <div class="security-icon">📝</div>
+          <h3>Full Audit Trail</h3>
+          <p>Every forecast update, parameter change, recommendation approval, and manual override is logged for accountability and model trust.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BENEFITS ===== -->
+  <section class="section section-light" id="benefits">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto;">
+        <span class="section-label">Expected Impact</span>
+        <h2 class="section-title">Benefits Across the Board</h2>
+        <p class="section-subtitle" style="margin:0 auto;">From reduced lost sales to lower emissions — SynchroTower delivers value at every level of the organization.</p>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card fade-in">
+          <div class="benefit-emoji">💰</div>
+          <h3>Revenue Protection</h3>
+          <p>Reduce lost sales and customer dissatisfaction from B2C stockouts while simultaneously reducing cash pressure from overstocking.</p>
+        </div>
+        <div class="benefit-card fade-in fade-in-delay-1">
+          <div class="benefit-emoji">⚡</div>
+          <h3>Operational Speed</h3>
+          <p>Shorten coordination time because all stakeholders see the same facts and share the same exception list — from days to hours.</p>
+        </div>
+        <div class="benefit-card fade-in fade-in-delay-2">
+          <div class="benefit-emoji">🏢</div>
+          <h3>Space Optimization</h3>
+          <p>Proactive capacity management prevents last-minute firefighting that reduces throughput. Forward-looking space views enable planned action.</p>
+        </div>
+        <div class="benefit-card fade-in fade-in-delay-3">
+          <div class="benefit-emoji">🧠</div>
+          <h3>Institutional Memory</h3>
+          <p>The workflow-based "case" model creates institutional memory: recurring issues are detected and addressed with process improvements.</p>
+        </div>
+        <div class="benefit-card fade-in fade-in-delay-4">
+          <div class="benefit-emoji">🔄</div>
+          <h3>Resilience</h3>
+          <p>Dynamic safety stock improves resilience under uncertainty while the AI engine continuously adapts to changing market conditions.</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="benefit-emoji">🌱</div>
+          <h3>ESG & Sustainability</h3>
+          <p>Better planning reduces waste from overstocking and obsolescence, plus reduces unnecessary expedited shipments that lower avoidable emissions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TIMELINE ===== -->
+  <section class="section section-alt" id="timeline">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto;">
+        <span class="section-label">Implementation</span>
+        <h2 class="section-title">Hackathon-Feasible MVP</h2>
+        <p class="section-subtitle" style="margin:0 auto;">A phased approach delivering a working end-to-end prototype within the hackathon timeline, with a clear path to scale.</p>
+      </div>
+      <div class="timeline-container fade-in">
+        <div class="timeline-line"><div class="timeline-line-fill"></div></div>
+        <div class="timeline-steps">
+          <div class="timeline-step active">
+            <div class="timeline-dot"></div>
+            <div class="timeline-phase">Stage 1</div>
+            <h4>Proposal & Design</h4>
+            <p>Initial proposal submission, architecture design, data source identification, and team formation.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <div class="timeline-phase">Mentorship</div>
+            <h4>Workshops & Hardening</h4>
+            <p>Secure-by-design workshops, AWS tooling, data pipeline hardening, and model evaluation refinement.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <div class="timeline-phase">Hack Day</div>
+            <h4>MVP Build</h4>
+            <p>Unified dataset layer, 7-day forecast with open data, dynamic safety stock, space estimator, and control tower dashboard.</p>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <div class="timeline-phase">Pitch Day</div>
+            <h4>Demo & Scale Path</h4>
+            <p>Measurable improvements on pilot SKU set (top 50–200 SKUs), interactive dashboard demo, and scalability roadmap.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TEAM ===== -->
+  <section class="section section-dark" id="team">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto;">
+        <span class="section-label section-label-dark">Our Team</span>
+        <h2 class="section-title" style="color:var(--white);">Built to Execute</h2>
+        <p class="section-subtitle section-subtitle-light" style="margin:0 auto;">A cross-functional team of up to 6 members structured to ensure feasibility and execution quality.</p>
+      </div>
+      <div class="team-roles">
+        <div class="team-role fade-in">
+          <div class="team-role-icon">🎯</div>
+          <h4>Product Owner</h4>
+          <p>Supply chain domain understanding and user story definition</p>
+        </div>
+        <div class="team-role fade-in fade-in-delay-1">
+          <div class="team-role-icon">🔧</div>
+          <h4>Data Engineer</h4>
+          <p>Unified data layer, ETL pipelines, and data quality management</p>
+        </div>
+        <div class="team-role fade-in fade-in-delay-2">
+          <div class="team-role-icon">🧪</div>
+          <h4>Data Scientist</h4>
+          <p>Demand forecasting, optimization models, and safety stock algorithms</p>
+        </div>
+        <div class="team-role fade-in fade-in-delay-3">
+          <div class="team-role-icon">🏗️</div>
+          <h4>Solution Architect</h4>
+          <p>Scalable system design, cloud infrastructure, and integration patterns</p>
+        </div>
+        <div class="team-role fade-in fade-in-delay-4">
+          <div class="team-role-icon">🎨</div>
+          <h4>Dashboard Developer</h4>
+          <p>Control tower interface, data visualization, and user experience</p>
+        </div>
+        <div class="team-role fade-in">
+          <div class="team-role-icon">🔐</div>
+          <h4>Security & Governance</h4>
+          <p>Secure-by-design implementation, PDPO compliance, and audit trails</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <h2 class="fade-in">Ready to Transform<br>Warehouse Operations?</h2>
+      <p class="fade-in fade-in-delay-1">SynchroTower brings real-time visibility, AI-powered insights, and cross-functional coordination to the B2B2C warehouse.</p>
+      <div class="cta-buttons fade-in fade-in-delay-2">
+        <a href="#hero" class="btn-white">
+          Back to Top
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#solution" class="btn-outline-white">
+          Review Solution
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>SynchroTower</h3>
+          <p>A centralized, real-time control tower backed by a data middle platform and AI decision engine — designed for the IoT Data Hackathon 2026.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Solution</h4>
+          <a href="#solution">Overview</a>
+          <a href="#features">AI Modules</a>
+          <a href="#data">Data Sources</a>
+          <a href="#security">Security</a>
+        </div>
+        <div class="footer-col">
+          <h4>Impact</h4>
+          <a href="#metrics">Success Metrics</a>
+          <a href="#benefits">Benefits</a>
+          <a href="#timeline">Roadmap</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="https://www.hko.gov.hk/en/abouthko/opendata_intro.htm" target="_blank">HKO Open Data</a>
+          <a href="https://data.gov.hk/" target="_blank">DATA.GOV.HK</a>
+          <a href="#team">Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 SynchroTower — IoT Data Hackathon</span>
+        <div class="footer-links">
+          <a href="#">AS Watson Industries</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Mobile menu toggle
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.querySelector('.nav-links');
+    let menuOpen = false;
+    mobileBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      navLinks.style.display = menuOpen ? 'flex' : '';
+      if (menuOpen) {
+        navLinks.style.cssText = `
+          display:flex; flex-direction:column; position:absolute;
+          top:72px; left:0; right:0; background:rgba(250,251,255,0.98);
+          padding:16px 24px; box-shadow:0 8px 30px rgba(0,0,0,0.1);
+          backdrop-filter:blur(20px); border-bottom:1px solid var(--blue-100);
+        `;
+      } else {
+        navLinks.style.cssText = '';
+      }
+    });
+
+    // Scroll animations
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Animated KPI counters
+    const kpiObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.target);
+          const suffix = el.dataset.suffix || '';
+          let current = 0;
+          const duration = 1500;
+          const step = target / (duration / 16);
+          const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+              current = target;
+              clearInterval(timer);
+            }
+            el.textContent = Math.round(current) + suffix;
+          }, 16);
+          kpiObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.kpi-number').forEach(el => kpiObserver.observe(el));
+
+    // Generate demand chart bars
+    const demandChart = document.getElementById('demandChart');
+    const b2bData = [45, 52, 48, 55, 50, 53, 47];
+    const b2cData = [65, 78, 72, 85, 90, 82, 70];
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const maxVal = Math.max(...b2bData, ...b2cData);
+
+    days.forEach((day, i) => {
+      const group = document.createElement('div');
+      group.style.cssText = 'flex:1; display:flex; gap:3px; align-items:flex-end; position:relative;';
+
+      const b2bBar = document.createElement('div');
+      b2bBar.className = 'chart-bar b2b';
+      b2bBar.style.height = '0%';
+      b2bBar.style.flex = '1';
+      setTimeout(() => { b2bBar.style.height = (b2bData[i] / maxVal * 100) + '%'; }, 300 + i * 80);
+
+      const b2cBar = document.createElement('div');
+      b2cBar.className = 'chart-bar b2c';
+      b2cBar.style.height = '0%';
+      b2cBar.style.flex = '1';
+      setTimeout(() => { b2cBar.style.height = (b2cData[i] / maxVal * 100) + '%'; }, 350 + i * 80);
+
+      group.appendChild(b2bBar);
+      group.appendChild(b2cBar);
+
+      const label = document.createElement('div');
+      label.style.cssText = 'position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-size:0.6rem; color:rgba(255,255,255,0.4);';
+      label.textContent = day;
+      group.appendChild(label);
+
+      demandChart.appendChild(group);
+    });
+
+    // ===== ERD RELATIONSHIP LINES =====
+    function drawERDLines() {
+      const svg = document.getElementById('erdLines');
+      const canvas = document.getElementById('erdCanvas');
+      if (!svg || !canvas) return;
+
+      const canvasRect = canvas.getBoundingClientRect();
+      svg.innerHTML = '';
+
+      // Define marker arrowheads
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+      // Crow's-foot "many" marker
+      const markerMany = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      markerMany.setAttribute('id', 'crowfoot');
+      markerMany.setAttribute('viewBox', '0 0 12 12');
+      markerMany.setAttribute('refX', '12');
+      markerMany.setAttribute('refY', '6');
+      markerMany.setAttribute('markerWidth', '10');
+      markerMany.setAttribute('markerHeight', '10');
+      markerMany.setAttribute('orient', 'auto-start-reverse');
+      markerMany.innerHTML = '<path d="M0,6 L12,0 M0,6 L12,12 M0,6 L12,6" stroke="#93c5fd" stroke-width="1.5" fill="none"/>';
+      defs.appendChild(markerMany);
+
+      // One marker (single line)
+      const markerOne = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      markerOne.setAttribute('id', 'onemark');
+      markerOne.setAttribute('viewBox', '0 0 12 12');
+      markerOne.setAttribute('refX', '0');
+      markerOne.setAttribute('refY', '6');
+      markerOne.setAttribute('markerWidth', '8');
+      markerOne.setAttribute('markerHeight', '8');
+      markerOne.setAttribute('orient', 'auto-start-reverse');
+      markerOne.innerHTML = '<line x1="4" y1="0" x2="4" y2="12" stroke="#93c5fd" stroke-width="2"/>';
+      defs.appendChild(markerOne);
+
+      // Dot marker for references
+      const markerDot = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      markerDot.setAttribute('id', 'dotmark');
+      markerDot.setAttribute('viewBox', '0 0 10 10');
+      markerDot.setAttribute('refX', '5');
+      markerDot.setAttribute('refY', '5');
+      markerDot.setAttribute('markerWidth', '6');
+      markerDot.setAttribute('markerHeight', '6');
+      markerDot.innerHTML = '<circle cx="5" cy="5" r="4" fill="#93c5fd"/>';
+      defs.appendChild(markerDot);
+
+      svg.appendChild(defs);
+
+      function getEntityCenter(id) {
+        const el = document.getElementById(id);
+        if (!el) return { x: 0, y: 0 };
+        return {
+          x: el.offsetLeft + el.offsetWidth / 2,
+          y: el.offsetTop + el.offsetHeight / 2,
+          top: el.offsetTop,
+          bottom: el.offsetTop + el.offsetHeight,
+          left: el.offsetLeft,
+          right: el.offsetLeft + el.offsetWidth,
+          w: el.offsetWidth,
+          h: el.offsetHeight
+        };
+      }
+
+      function drawPath(fromId, toId, fromSide, toSide, dashed) {
+        const from = getEntityCenter(fromId);
+        const to = getEntityCenter(toId);
+
+        let x1, y1, x2, y2;
+
+        // Calculate connection points based on sides
+        if (fromSide === 'bottom') { x1 = from.x; y1 = from.bottom; }
+        else if (fromSide === 'right') { x1 = from.right; y1 = from.y; }
+        else if (fromSide === 'left') { x1 = from.left; y1 = from.y; }
+        else { x1 = from.x; y1 = from.top; }
+
+        if (toSide === 'top') { x2 = to.x; y2 = to.top; }
+        else if (toSide === 'left') { x2 = to.left; y2 = to.y; }
+        else if (toSide === 'right') { x2 = to.right; y2 = to.y; }
+        else { x2 = to.x; y2 = to.bottom; }
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        // Create smooth curved paths
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2;
+        let d;
+
+        if (fromSide === 'bottom' && toSide === 'top') {
+          d = `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
+        } else if (fromSide === 'right' && toSide === 'left') {
+          d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+        } else if (fromSide === 'left' && toSide === 'top') {
+          d = `M ${x1} ${y1} C ${x1 - 40} ${y1}, ${x2} ${y2 - 40}, ${x2} ${y2}`;
+        } else if (fromSide === 'bottom' && toSide === 'left') {
+          d = `M ${x1} ${y1} C ${x1} ${y2}, ${x2 - 20} ${y2}, ${x2} ${y2}`;
+        } else {
+          d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+        }
+
+        path.setAttribute('d', d);
+        path.setAttribute('marker-end', 'url(#crowfoot)');
+        path.setAttribute('marker-start', 'url(#dotmark)');
+
+        if (dashed) {
+          path.setAttribute('stroke-dasharray', '6 4');
+          path.setAttribute('stroke', '#bfdbfe');
+        }
+
+        svg.appendChild(path);
+      }
+
+      // Relationships:
+      // SKU Master → Pack Size (1:M)
+      drawPath('erd-sku', 'erd-pack', 'right', 'left', false);
+      // SKU Master → PO (1:M)
+      drawPath('erd-sku', 'erd-po', 'bottom', 'top', false);
+      // SKU Master → Production Order (1:M)
+      drawPath('erd-sku', 'erd-prod', 'bottom', 'top', false);
+      // SKU Master → Inventory Position (1:M)
+      drawPath('erd-sku', 'erd-inv', 'bottom', 'top', false);
+      // Pack Size → Inventory Position (ref)
+      drawPath('erd-pack', 'erd-inv', 'bottom', 'right', true);
+      // Inventory → Warehouse Events (1:M)
+      drawPath('erd-inv', 'erd-whe', 'bottom', 'top', false);
+      // PO → Shipment Plan (1:M)
+      drawPath('erd-po', 'erd-ship', 'bottom', 'top', false);
+      // SKU → Shipment Plan (ref)
+      drawPath('erd-inv', 'erd-ship', 'bottom', 'top', true);
+    }
+
+    // Draw on load and resize
+    window.addEventListener('load', drawERDLines);
+    window.addEventListener('resize', drawERDLines);
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Close mobile menu if open
+          if (menuOpen) {
+            menuOpen = false;
+            navLinks.style.cssText = '';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
