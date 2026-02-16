@@ -2058,4 +2058,343 @@
           <h4>Solution Architect</h4>
           <p>Scalable system design, cloud infrastructure, and integration patterns</p>
         </div>
-     
+        <div class="team-role fade-in fade-in-delay-4">
+          <div class="team-role-icon">🎨</div>
+          <h4>Dashboard Developer</h4>
+          <p>Control tower interface, data visualization, and user experience</p>
+        </div>
+        <div class="team-role fade-in">
+          <div class="team-role-icon">🔐</div>
+          <h4>Security & Governance</h4>
+          <p>Secure-by-design implementation, PDPO compliance, and audit trails</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <h2 class="fade-in">Ready to Transform<br>Warehouse Operations?</h2>
+      <p class="fade-in fade-in-delay-1">SynchroTower brings real-time visibility, AI-powered insights, and cross-functional coordination to the B2B2C warehouse.</p>
+      <div class="cta-buttons fade-in fade-in-delay-2">
+        <a href="#hero" class="btn-white">
+          Back to Top
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#solution" class="btn-outline-white">
+          Review Solution
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>SynchroTower</h3>
+          <p>A centralized, real-time control tower backed by a data middle platform and AI decision engine — designed for the IoT Data Hackathon 2026.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Solution</h4>
+          <a href="#solution">Overview</a>
+          <a href="#features">AI Modules</a>
+          <a href="#data">Data Sources</a>
+          <a href="#security">Security</a>
+        </div>
+        <div class="footer-col">
+          <h4>Impact</h4>
+          <a href="#metrics">Success Metrics</a>
+          <a href="#benefits">Benefits</a>
+          <a href="#timeline">Roadmap</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="https://www.hko.gov.hk/en/abouthko/opendata_intro.htm" target="_blank">HKO Open Data</a>
+          <a href="https://data.gov.hk/" target="_blank">DATA.GOV.HK</a>
+          <a href="#team">Team</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 SynchroTower — IoT Data Hackathon</span>
+        <div class="footer-links">
+          <a href="#">AS Watson Industries</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Mobile menu toggle
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.querySelector('.nav-links');
+    let menuOpen = false;
+    mobileBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      navLinks.style.display = menuOpen ? 'flex' : '';
+      if (menuOpen) {
+        navLinks.style.cssText = `
+          display:flex; flex-direction:column; position:absolute;
+          top:72px; left:0; right:0; background:rgba(250,251,255,0.98);
+          padding:16px 24px; box-shadow:0 8px 30px rgba(0,0,0,0.1);
+          backdrop-filter:blur(20px); border-bottom:1px solid var(--blue-100);
+        `;
+      } else {
+        navLinks.style.cssText = '';
+      }
+    });
+
+    // Scroll animations
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Animated KPI counters
+    const kpiObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.target);
+          const suffix = el.dataset.suffix || '';
+          let current = 0;
+          const duration = 1500;
+          const step = target / (duration / 16);
+          const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+              current = target;
+              clearInterval(timer);
+            }
+            el.textContent = Math.round(current) + suffix;
+          }, 16);
+          kpiObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.kpi-number').forEach(el => kpiObserver.observe(el));
+
+    // Generate demand chart bars
+    const demandChart = document.getElementById('demandChart');
+    const b2bData = [45, 52, 48, 55, 50, 53, 47];
+    const b2cData = [65, 78, 72, 85, 90, 82, 70];
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const maxVal = Math.max(...b2bData, ...b2cData);
+
+    days.forEach((day, i) => {
+      const group = document.createElement('div');
+      group.style.cssText = 'flex:1; display:flex; gap:3px; align-items:flex-end; position:relative;';
+
+      const b2bBar = document.createElement('div');
+      b2bBar.className = 'chart-bar b2b';
+      b2bBar.style.height = '0%';
+      b2bBar.style.flex = '1';
+      setTimeout(() => { b2bBar.style.height = (b2bData[i] / maxVal * 100) + '%'; }, 300 + i * 80);
+
+      const b2cBar = document.createElement('div');
+      b2cBar.className = 'chart-bar b2c';
+      b2cBar.style.height = '0%';
+      b2cBar.style.flex = '1';
+      setTimeout(() => { b2cBar.style.height = (b2cData[i] / maxVal * 100) + '%'; }, 350 + i * 80);
+
+      group.appendChild(b2bBar);
+      group.appendChild(b2cBar);
+
+      const label = document.createElement('div');
+      label.style.cssText = 'position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-size:0.6rem; color:rgba(255,255,255,0.4);';
+      label.textContent = day;
+      group.appendChild(label);
+
+      demandChart.appendChild(group);
+    });
+
+    // ===== ERD RELATIONSHIP LINES =====
+    function drawERDLines() {
+      const svg = document.getElementById('erdLines');
+      const canvas = document.getElementById('erdCanvas');
+      if (!svg || !canvas) return;
+
+      const canvasRect = canvas.getBoundingClientRect();
+      svg.innerHTML = '';
+
+      // Define marker arrowheads
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+      // Crow's-foot "many" marker
+      const markerMany = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      markerMany.setAttribute('id', 'crowfoot');
+      markerMany.setAttribute('viewBox', '0 0 12 12');
+      markerMany.setAttribute('refX', '12');
+      markerMany.setAttribute('refY', '6');
+      markerMany.setAttribute('markerWidth', '10');
+      markerMany.setAttribute('markerHeight', '10');
+      markerMany.setAttribute('orient', 'auto-start-reverse');
+      markerMany.innerHTML = '<path d="M0,6 L12,0 M0,6 L12,12 M0,6 L12,6" stroke="#60a5fa" stroke-width="2" fill="none"/>';
+      defs.appendChild(markerMany);
+
+      // One marker (single line)
+      const markerOne = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      markerOne.setAttribute('id', 'onemark');
+      markerOne.setAttribute('viewBox', '0 0 12 12');
+      markerOne.setAttribute('refX', '0');
+      markerOne.setAttribute('refY', '6');
+      markerOne.setAttribute('markerWidth', '8');
+      markerOne.setAttribute('markerHeight', '8');
+      markerOne.setAttribute('orient', 'auto-start-reverse');
+      markerOne.innerHTML = '<line x1="4" y1="0" x2="4" y2="12" stroke="#60a5fa" stroke-width="2"/>';
+      defs.appendChild(markerOne);
+
+      // Dot marker for references
+      const markerDot = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      markerDot.setAttribute('id', 'dotmark');
+      markerDot.setAttribute('viewBox', '0 0 10 10');
+      markerDot.setAttribute('refX', '5');
+      markerDot.setAttribute('refY', '5');
+      markerDot.setAttribute('markerWidth', '6');
+      markerDot.setAttribute('markerHeight', '6');
+      markerDot.innerHTML = '<circle cx="5" cy="5" r="3.5" fill="#60a5fa"/>';
+      defs.appendChild(markerDot);
+
+      svg.appendChild(defs);
+
+      function getEntityCenter(id) {
+        const el = document.getElementById(id);
+        if (!el) return { x: 0, y: 0 };
+        return {
+          x: el.offsetLeft + el.offsetWidth / 2,
+          y: el.offsetTop + el.offsetHeight / 2,
+          top: el.offsetTop,
+          bottom: el.offsetTop + el.offsetHeight,
+          left: el.offsetLeft,
+          right: el.offsetLeft + el.offsetWidth,
+          w: el.offsetWidth,
+          h: el.offsetHeight
+        };
+      }
+
+      function drawPath(fromId, toId, fromSide, toSide, dashed) {
+        const from = getEntityCenter(fromId);
+        const to = getEntityCenter(toId);
+
+        let x1, y1, x2, y2;
+
+        // Calculate connection points based on sides
+        if (fromSide === 'bottom') { x1 = from.x; y1 = from.bottom; }
+        else if (fromSide === 'right') { x1 = from.right; y1 = from.y; }
+        else if (fromSide === 'left') { x1 = from.left; y1 = from.y; }
+        else { x1 = from.x; y1 = from.top; }
+
+        if (toSide === 'top') { x2 = to.x; y2 = to.top; }
+        else if (toSide === 'left') { x2 = to.left; y2 = to.y; }
+        else if (toSide === 'right') { x2 = to.right; y2 = to.y; }
+        else { x2 = to.x; y2 = to.bottom; }
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        // Create straight orthogonal (L-shaped) paths for clarity
+        let d;
+        const spacing = 15; // spacing for orthogonal turns
+
+        if (fromSide === 'bottom' && toSide === 'top') {
+          // Vertical line: straight down from source, then straight up to target
+          const midY = (y1 + y2) / 2;
+          d = `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
+        } else if (fromSide === 'right' && toSide === 'left') {
+          // Horizontal line: straight right from source, then straight left to target
+          const midX = (x1 + x2) / 2;
+          d = `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+        } else if (fromSide === 'left' && toSide === 'top') {
+          // L-shape: go left, then up
+          d = `M ${x1} ${y1} L ${x1 - spacing} ${y1} L ${x1 - spacing} ${y2 - spacing} L ${x2} ${y2 - spacing} L ${x2} ${y2}`;
+        } else if (fromSide === 'bottom' && toSide === 'left') {
+          // L-shape: go down, then left
+          d = `M ${x1} ${y1} L ${x1} ${y2 + spacing} L ${x2 - spacing} ${y2 + spacing} L ${x2 - spacing} ${y2} L ${x2} ${y2}`;
+        } else if (fromSide === 'bottom' && toSide === 'right') {
+          // L-shape: go down, then right
+          d = `M ${x1} ${y1} L ${x1} ${y2 + spacing} L ${x2 + spacing} ${y2 + spacing} L ${x2 + spacing} ${y2} L ${x2} ${y2}`;
+        } else if (fromSide === 'right' && toSide === 'top') {
+          // L-shape: go right, then up
+          d = `M ${x1} ${y1} L ${x2 + spacing} ${y1} L ${x2 + spacing} ${y2 - spacing} L ${x2} ${y2 - spacing} L ${x2} ${y2}`;
+        } else if (fromSide === 'top' && toSide === 'left') {
+          // L-shape: go up, then left
+          d = `M ${x1} ${y1} L ${x1} ${y1 - spacing} L ${x2 - spacing} ${y1 - spacing} L ${x2 - spacing} ${y2} L ${x2} ${y2}`;
+        } else if (fromSide === 'top' && toSide === 'right') {
+          // L-shape: go up, then right
+          d = `M ${x1} ${y1} L ${x1} ${y1 - spacing} L ${x2 + spacing} ${y1 - spacing} L ${x2 + spacing} ${y2} L ${x2} ${y2}`;
+        } else {
+          // Default: simple L-shape
+          const midX = (x1 + x2) / 2;
+          const midY = (y1 + y2) / 2;
+          d = `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+        }
+
+        path.setAttribute('d', d);
+        path.setAttribute('marker-end', 'url(#crowfoot)');
+        path.setAttribute('marker-start', 'url(#dotmark)');
+
+        if (dashed) {
+          path.setAttribute('stroke-dasharray', '6 4');
+          path.setAttribute('stroke', '#93c5fd');
+        }
+
+        svg.appendChild(path);
+      }
+
+      // Relationships:
+      // SKU Master → Pack Size (1:M) - horizontal
+      drawPath('erd-sku', 'erd-pack', 'right', 'left', false);
+      // SKU Master → PO (1:M) - vertical down
+      drawPath('erd-sku', 'erd-po', 'bottom', 'top', false);
+      // SKU Master → Production Order (1:M) - vertical down
+      drawPath('erd-sku', 'erd-prod', 'bottom', 'top', false);
+      // SKU Master → Inventory Position (1:M) - vertical down
+      drawPath('erd-sku', 'erd-inv', 'bottom', 'top', false);
+      // Pack Size → Inventory Position (ref) - diagonal L-shape
+      drawPath('erd-pack', 'erd-inv', 'bottom', 'right', true);
+      // Inventory → Warehouse Events (1:M) - vertical down
+      drawPath('erd-inv', 'erd-whe', 'bottom', 'top', false);
+      // PO → Shipment Plan (1:M) - vertical down
+      drawPath('erd-po', 'erd-ship', 'bottom', 'top', false);
+      // Inventory → Shipment Plan (ref) - vertical down
+      drawPath('erd-inv', 'erd-ship', 'bottom', 'top', true);
+    }
+
+    // Draw on load and resize
+    window.addEventListener('load', drawERDLines);
+    window.addEventListener('resize', drawERDLines);
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Close mobile menu if open
+          if (menuOpen) {
+            menuOpen = false;
+            navLinks.style.cssText = '';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
