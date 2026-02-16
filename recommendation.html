@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Recommendation Card — SynchroTower</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --blue-50: #eff6ff;
+      --blue-100: #dbeafe;
+      --blue-200: #bfdbfe;
+      --blue-300: #93c5fd;
+      --blue-400: #60a5fa;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --blue-700: #1d4ed8;
+      --blue-800: #1e40af;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --white: #ffffff;
+      --text-primary: #0c1222;
+      --text-secondary: #475569;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, #fafbff 0%, #ffffff 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(250, 251, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(37, 99, 235, 0.08);
+      padding: 16px 0;
+    }
+    .navbar-inner {
+      max-width: 1400px; margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem;
+      color: var(--blue-800); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      color: var(--slate-600); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--blue-700); }
+
+    .container {
+      max-width: 1200px; margin: 0 auto; padding: 120px 32px 80px;
+    }
+
+    .page-header {
+      text-align: center; margin-bottom: 48px;
+    }
+    .page-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--blue-50); border: 1px solid var(--blue-200);
+      padding: 6px 16px; border-radius: 100px;
+      font-size: 0.8rem; font-weight: 600; color: var(--blue-700);
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .page-subtitle {
+      font-size: 1.1rem; color: var(--text-secondary);
+      max-width: 680px; margin: 0 auto;
+    }
+
+    .recommendation-card {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+      border: 3px solid #f59e0b;
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(245, 158, 11, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .recommendation-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #f59e0b, #d97706, #b45309);
+    }
+
+    .rec-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid rgba(217, 119, 6, 0.3);
+    }
+    .rec-header-left {
+      flex: 1;
+    }
+    .rec-risk-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #ef4444;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+    .rec-priority {
+      font-size: 0.8rem;
+      color: #92400e;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 8px;
+    }
+    .rec-header-right {
+      text-align: right;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 16px 20px;
+      border-radius: 12px;
+    }
+    .rec-case-id {
+      font-size: 0.75rem; color: var(--slate-500);
+      margin-bottom: 4px;
+    }
+    .rec-case-value {
+      font-weight: 700; color: var(--slate-800);
+      font-size: 1.1rem;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .rec-timestamp {
+      font-size: 0.75rem; color: var(--slate-500);
+      margin-top: 8px;
+    }
+
+    .rec-section {
+      margin-bottom: 28px;
+    }
+    .rec-section:last-child { margin-bottom: 0; }
+    .rec-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #92400e;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .rec-label-icon {
+      font-size: 1rem;
+    }
+    .rec-content {
+      font-size: 0.95rem;
+      color: var(--slate-800);
+      line-height: 1.7;
+    }
+
+    .rec-hypothesis {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 20px 24px;
+      border-radius: 12px;
+      border-left: 4px solid #f59e0b;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .rec-hypothesis p {
+      margin-bottom: 12px;
+    }
+    .rec-hypothesis p:last-child { margin-bottom: 0; }
+    .rec-hypothesis strong {
+      color: #92400e;
+      font-weight: 700;
+    }
+    .rec-hypothesis .highlight {
+      background: rgba(245, 158, 11, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .rec-actions {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .rec-action {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      border-left: 4px solid #f59e0b;
+      transition: all 0.3s;
+    }
+    .rec-action:hover {
+      background: rgba(255, 255, 255, 0.8);
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .rec-action:last-child { margin-bottom: 0; }
+    .rec-action-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+    .rec-action-content {
+      flex: 1;
+    }
+    .rec-action-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--slate-900);
+      margin-bottom: 8px;
+    }
+    .rec-action-desc {
+      font-size: 0.9rem;
+      color: var(--slate-700);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .rec-action-meta {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    .rec-action-owner {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.85rem;
+    }
+    .rec-action-owner strong {
+      color: #92400e;
+      font-weight: 700;
+    }
+    .rec-action-due {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.85rem;
+      color: var(--slate-600);
+    }
+    .rec-action-due strong {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .rec-impact {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .rec-impact-item {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .rec-impact-value {
+      font-weight: 800;
+      color: #059669;
+      font-size: 1.8rem;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 6px;
+    }
+    .rec-impact-label {
+      font-size: 0.85rem;
+      color: var(--slate-600);
+      font-weight: 500;
+    }
+
+    .rec-footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 2px solid rgba(217, 119, 6, 0.3);
+      display: flex; justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .rec-footer-left {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.85rem; color: var(--slate-600);
+    }
+    .rec-footer-right {
+      display: flex; gap: 12px;
+    }
+    .rec-btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rec-btn-primary {
+      background: #f59e0b;
+      color: white;
+    }
+    .rec-btn-primary:hover {
+      background: #d97706;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+    .rec-btn-secondary {
+      background: white;
+      color: #92400e;
+      border: 2px solid #f59e0b;
+    }
+    .rec-btn-secondary:hover {
+      background: #fef3c7;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 100px 20px 60px; }
+      .recommendation-card { padding: 24px; }
+      .rec-header { flex-direction: column; gap: 20px; }
+      .rec-header-right { width: 100%; text-align: left; }
+      .rec-impact { grid-template-columns: 1fr; }
+      .rec-footer { flex-direction: column; align-items: stretch; }
+      .rec-footer-right { flex-direction: column; }
+      .rec-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-logo">
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#2563eb"/><path d="M8 16L14 10V14H18V10L24 16L18 22V18H14V22L8 16Z" fill="white"/></svg>
+        SynchroTower
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="forecast.html">Forecast</a>
+        <a href="capacity.html">Capacity</a>
+        <a href="recommendation.html">Recommendations</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="page-badge">💡 AI-Generated Recommendation</div>
+      <h1 class="page-title">Actionable Insight Card</h1>
+      <p class="page-subtitle">Cross-functional recommendation with root cause analysis and expected impact</p>
+    </div>
+
+    <div class="recommendation-card">
+      <div class="rec-header">
+        <div class="rec-header-left">
+          <div class="rec-risk-badge">
+            <span>⚠️</span> Stockout Risk
+          </div>
+          <div class="rec-priority">High Priority · Action Required Within 4 Hours</div>
+        </div>
+        <div class="rec-header-right">
+          <div class="rec-case-id">Case ID</div>
+          <div class="rec-case-value">CASE-2026-0427</div>
+          <div class="rec-timestamp">Generated: 2026-04-27 14:32 HKT</div>
+        </div>
+      </div>
+
+      <div class="rec-section">
+        <div class="rec-label">
+          <span class="rec-label-icon">🔍</span> Root Cause Hypothesis
+        </div>
+        <div class="rec-hypothesis">
+          <p>
+            <strong>Primary Driver:</strong> B2C demand spike detected (<span class="highlight">+85% vs forecast</span>) for SKU-1042 (Premium Sparkling Water 500ml) due to weather forecast (high temperature +3°C above average) and upcoming public holiday on Day 4.
+          </p>
+          <p>
+            <strong>Current Situation:</strong> Inventory at <span class="highlight">142 units</span> will deplete below safety stock threshold (<span class="highlight">150 units</span>) by Day 3. Forecast indicates complete stockout by Day 5 if no action is taken.
+          </p>
+          <p>
+            <strong>Supply Constraint:</strong> Procurement order <span class="highlight">PO-8891</span> delayed by 2 days due to supplier capacity constraints. Expected arrival moved from Day 2 to Day 4, missing critical demand window (Days 3-5).
+          </p>
+          <p>
+            <strong>Impact Assessment:</strong> Potential revenue loss of <span class="highlight">$12,500</span> and service level drop of <span class="highlight">-2.1%</span> if stockout occurs during peak demand period.
+          </p>
+        </div>
+      </div>
+
+      <div class="rec-section">
+        <div class="rec-label">
+          <span class="rec-label-icon">✅</span> Recommended Actions
+        </div>
+        <ul class="rec-actions">
+          <li class="rec-action">
+            <div class="rec-action-icon">1</div>
+            <div class="rec-action-content">
+              <div class="rec-action-title">Expedite PO-8891 Shipment</div>
+              <div class="rec-action-desc">
+                Contact supplier (ABC Beverages Ltd.) to prioritize PO-8891 shipment. Offer expedited freight option (air freight or express courier) to ensure arrival by Day 2 instead of Day 4. Estimated expedite cost: $450, but protects $12,500 revenue.
+              </div>
+              <div class="rec-action-meta">
+                <div class="rec-action-owner">
+                  <span>👤</span> <strong>Owner:</strong> Procurement Team (Sarah Chen)
+                </div>
+                <div class="rec-action-due">
+                  <span>⏰</span> <strong>Due:</strong> Within 4 hours
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="rec-action">
+            <div class="rec-action-icon">2</div>
+            <div class="rec-action-content">
+              <div class="rec-action-title">Allocate from B2B Buffer Stock</div>
+              <div class="rec-action-desc">
+                Temporarily reallocate 50 units from B2B safety stock (currently 280 units, well above B2B threshold of 200 units) to B2C channel. This provides immediate buffer until expedited shipment arrives. Requires approval from Inventory Manager.
+              </div>
+              <div class="rec-action-meta">
+                <div class="rec-action-owner">
+                  <span>👤</span> <strong>Owner:</strong> Inventory Manager (David Wong)
+                </div>
+                <div class="rec-action-due">
+                  <span>⏰</span> <strong>Due:</strong> Within 2 hours
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="rec-action">
+            <div class="rec-action-icon">3</div>
+            <div class="rec-action-content">
+              <div class="rec-action-title">Prepare Warehouse Zone B for Expedited Receiving</div>
+              <div class="rec-action-desc">
+                Reserve 2 slots in Zone B (bulk storage) for incoming expedited shipment. Coordinate with receiving team to prioritize putaway. Update WMS with expected arrival time to enable real-time tracking.
+              </div>
+              <div class="rec-action-meta">
+                <div class="rec-action-owner">
+                  <span>👤</span> <strong>Owner:</strong> Warehouse Supervisor (Michael Lee)
+                </div>
+                <div class="rec-action-due">
+                  <span>⏰</span> <strong>Due:</strong> By end of day
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="rec-section">
+        <div class="rec-label">
+          <span class="rec-label-icon">📊</span> Expected Impact
+        </div>
+        <div class="rec-impact">
+          <div class="rec-impact-item">
+            <div class="rec-impact-value">↓ 95%</div>
+            <div class="rec-impact-label">Stockout Risk Reduction</div>
+          </div>
+          <div class="rec-impact-item">
+            <div class="rec-impact-value">$12.5K</div>
+            <div class="rec-impact-label">Revenue Protected</div>
+          </div>
+          <div class="rec-impact-item">
+            <div class="rec-impact-value">+2.1%</div>
+            <div class="rec-impact-label">Service Level Improvement</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rec-footer">
+        <div class="rec-footer-left">
+          <span>🤖</span>
+          <span>Generated by SynchroTower AI Decision Engine</span>
+        </div>
+        <div class="rec-footer-right">
+          <a href="forecast.html" class="rec-btn rec-btn-secondary">
+            View Forecast
+          </a>
+          <button class="rec-btn rec-btn-primary">
+            Approve Actions
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

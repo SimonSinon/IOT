@@ -697,6 +697,13 @@
       .footer-bottom { flex-direction: column; gap: 12px; }
       .hero-actions { flex-direction: column; }
       .cta-buttons { flex-direction: column; align-items: center; }
+      .forecast-chart-container, .capacity-chart-container {
+        height: 280px;
+      }
+      .chart-labels { font-size: 0.65rem; }
+      .chart-y-labels { font-size: 0.65rem; }
+      .capacity-legend { grid-template-columns: repeat(2, 1fr); }
+      .rec-impact { flex-direction: column; gap: 12px; }
     }
 
     /* ===== SCROLLBAR ===== */
@@ -712,6 +719,350 @@
     .svg-chart .line-safety { stroke: #f59e0b; stroke-dasharray: 6 4; }
     .svg-chart .area-forecast { fill: rgba(59, 130, 246, 0.1); stroke: none; }
 
+    /* ===== EXAMPLES SECTION ===== */
+    .examples-section {
+      padding: 120px 0;
+      background: var(--white);
+    }
+    .example-card {
+      background: var(--white);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      margin-bottom: 48px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+    .example-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+    .example-header {
+      margin-bottom: 32px;
+    }
+    .example-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .example-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .example-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--blue-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    /* Forecast Chart */
+    .forecast-chart-container {
+      position: relative;
+      height: 320px;
+      margin-top: 24px;
+    }
+    .chart-axis {
+      position: absolute;
+      border-color: var(--slate-300);
+    }
+    .chart-x-axis {
+      bottom: 0;
+      left: 60px;
+      right: 40px;
+      height: 1px;
+      border-top: 1px solid var(--slate-300);
+    }
+    .chart-y-axis {
+      left: 60px;
+      top: 0;
+      bottom: 30px;
+      width: 1px;
+      border-left: 1px solid var(--slate-300);
+    }
+    .chart-grid {
+      position: absolute;
+      left: 60px;
+      right: 40px;
+      top: 0;
+      bottom: 30px;
+    }
+    .chart-grid-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 1px dashed var(--slate-200);
+    }
+    .chart-labels {
+      position: absolute;
+      left: 0;
+      bottom: -24px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--slate-500);
+      padding: 0 60px 0 60px;
+    }
+    .chart-y-labels {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 30px;
+      width: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--slate-500);
+      padding: 8px 8px 0 0;
+      text-align: right;
+    }
+    .chart-area {
+      position: absolute;
+      left: 60px;
+      right: 40px;
+      top: 0;
+      bottom: 30px;
+    }
+    .forecast-band {
+      fill: rgba(59, 130, 246, 0.15);
+      stroke: none;
+    }
+    .forecast-line {
+      fill: none;
+      stroke: var(--blue-500);
+      stroke-width: 2.5;
+    }
+    .safety-stock-line {
+      fill: none;
+      stroke: #f59e0b;
+      stroke-width: 2;
+      stroke-dasharray: 8 4;
+    }
+    .stockout-risk-area {
+      fill: rgba(239, 68, 68, 0.2);
+      stroke: #ef4444;
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
+    .chart-legend {
+      display: flex;
+      gap: 24px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--slate-600);
+    }
+    .legend-color {
+      width: 16px;
+      height: 3px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .legend-color.band { background: rgba(59, 130, 246, 0.3); }
+    .legend-color.forecast { background: var(--blue-500); }
+    .legend-color.safety { background: #f59e0b; border-style: dashed; border-width: 2px 0; }
+    .legend-color.risk { background: rgba(239, 68, 68, 0.3); }
+
+    /* Warehouse Capacity Chart */
+    .capacity-chart-container {
+      position: relative;
+      height: 360px;
+      margin-top: 24px;
+    }
+    .capacity-threshold {
+      position: absolute;
+      left: 60px;
+      right: 40px;
+      border-top: 3px solid #ef4444;
+      border-style: dashed;
+      z-index: 10;
+    }
+    .capacity-stack {
+      position: absolute;
+      left: 60px;
+      right: 40px;
+      bottom: 30px;
+    }
+    .stack-segment {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-radius: 4px 4px 0 0;
+      transition: opacity 0.3s;
+    }
+    .stack-segment:hover { opacity: 0.8; }
+    .stack-segment.bulk { background: var(--blue-500); }
+    .stack-segment.pick { background: var(--blue-400); }
+    .stack-segment.returns { background: var(--blue-300); }
+    .stack-segment.staging { background: var(--blue-200); }
+    .overflow-day {
+      position: absolute;
+      top: -8px;
+      width: 24px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 4px 4px 0 0;
+      animation: pulse-warning 2s ease-in-out infinite;
+    }
+    @keyframes pulse-warning {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .capacity-legend {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .capacity-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--slate-600);
+    }
+    .capacity-legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Recommendation Card */
+    .recommendation-card {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .recommendation-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+    .rec-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .rec-risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ef4444;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .rec-priority {
+      font-size: 0.72rem;
+      color: #92400e;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .rec-section {
+      margin-bottom: 20px;
+    }
+    .rec-section:last-child { margin-bottom: 0; }
+    .rec-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #92400e;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .rec-content {
+      font-size: 0.9rem;
+      color: var(--slate-800);
+      line-height: 1.6;
+    }
+    .rec-hypothesis {
+      background: rgba(255, 255, 255, 0.6);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid #f59e0b;
+    }
+    .rec-actions {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .rec-action {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    .rec-action:last-child { border-bottom: none; }
+    .rec-action-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f59e0b;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .rec-action-text {
+      flex: 1;
+    }
+    .rec-action-owner {
+      font-weight: 600;
+      color: #92400e;
+    }
+    .rec-impact {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .rec-impact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+    .rec-impact-value {
+      font-weight: 700;
+      color: #059669;
+      font-size: 1rem;
+    }
+    .rec-impact-label {
+      color: var(--slate-600);
+    }
+
     /* ===== ERD DIAGRAM ===== */
     .erd-section {
       padding: 80px 0 120px;
@@ -725,13 +1076,15 @@
       padding: 48px 24px;
       box-shadow: var(--shadow-md);
       overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
     }
     .erd-canvas {
       position: relative;
-      min-width: 960px;
-      min-height: 640px;
+      min-width: 1200px;
+      min-height: 720px;
       margin: 0 auto;
-      max-width: 1100px;
+      max-width: 1400px;
     }
     .erd-entity {
       position: absolute;
@@ -798,9 +1151,11 @@
       pointer-events: none;
     }
     .erd-lines line, .erd-lines path {
-      stroke: var(--blue-300);
-      stroke-width: 1.5;
+      stroke: var(--blue-400);
+      stroke-width: 2;
       fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
     .erd-lines .rel-marker {
       fill: var(--blue-400);
@@ -843,7 +1198,7 @@
 
     @media (max-width: 768px) {
       .erd-wrapper { padding: 24px 12px; }
-      .erd-canvas { min-height: 500px; }
+      .erd-canvas { min-height: 500px; min-width: 800px; }
     }
   </style>
 </head>
@@ -864,6 +1219,7 @@
         <a href="#solution">Solution</a>
         <a href="#datamodel">Data Model</a>
         <a href="#features">Features</a>
+        <a href="#examples">Examples</a>
         <a href="#metrics">Metrics</a>
         <a href="#data">Data Sources</a>
         <a href="#timeline">Roadmap</a>
@@ -1167,7 +1523,7 @@
           <svg class="erd-lines" id="erdLines"></svg>
 
           <!-- 1. SKU Master (center-top) -->
-          <div class="erd-entity" id="erd-sku" style="top: 20px; left: 400px;">
+          <div class="erd-entity" id="erd-sku" style="top: 30px; left: 350px;">
             <div class="erd-entity-header">
               <span class="erd-entity-header-icon">📦</span> SKU Master
             </div>
@@ -1182,7 +1538,7 @@
           </div>
 
           <!-- 2. Pack Size (right of SKU) -->
-          <div class="erd-entity" id="erd-pack" style="top: 20px; left: 700px;">
+          <div class="erd-entity" id="erd-pack" style="top: 30px; left: 800px;">
             <div class="erd-entity-header accent-teal">
               <span class="erd-entity-header-icon">📐</span> Pack Size
             </div>
@@ -1199,7 +1555,7 @@
           </div>
 
           <!-- 3. Purchase Order (left, row 2) -->
-          <div class="erd-entity" id="erd-po" style="top: 240px; left: 30px;">
+          <div class="erd-entity" id="erd-po" style="top: 280px; left: 50px;">
             <div class="erd-entity-header accent-purple">
               <span class="erd-entity-header-icon">🛒</span> Purchase Order
             </div>
@@ -1215,7 +1571,7 @@
           </div>
 
           <!-- 4. Production Order (center-left, row 2) -->
-          <div class="erd-entity" id="erd-prod" style="top: 240px; left: 280px;">
+          <div class="erd-entity" id="erd-prod" style="top: 280px; left: 350px;">
             <div class="erd-entity-header accent-amber">
               <span class="erd-entity-header-icon">🏭</span> Production Order
             </div>
@@ -1231,7 +1587,7 @@
           </div>
 
           <!-- 5. Inventory Position (center-right, row 2) -->
-          <div class="erd-entity" id="erd-inv" style="top: 240px; left: 540px;">
+          <div class="erd-entity" id="erd-inv" style="top: 280px; left: 800px;">
             <div class="erd-entity-header accent-rose">
               <span class="erd-entity-header-icon">📊</span> Inventory Position
             </div>
@@ -1249,7 +1605,7 @@
           </div>
 
           <!-- 6. Warehouse Events (right, row 3) -->
-          <div class="erd-entity" id="erd-whe" style="top: 460px; left: 180px;">
+          <div class="erd-entity" id="erd-whe" style="top: 530px; left: 200px;">
             <div class="erd-entity-header accent-emerald">
               <span class="erd-entity-header-icon">⏱️</span> Warehouse Events
             </div>
@@ -1265,7 +1621,7 @@
           </div>
 
           <!-- 7. Shipment Plan (far right, row 3) -->
-          <div class="erd-entity" id="erd-ship" style="top: 460px; left: 540px;">
+          <div class="erd-entity" id="erd-ship" style="top: 530px; left: 800px;">
             <div class="erd-entity-header accent-indigo">
               <span class="erd-entity-header-icon">🚛</span> Shipment Plan
             </div>
@@ -1342,6 +1698,100 @@
           <h3>Unified Data Layer</h3>
           <p>Standardized SKU master data with pack-size conversion and physical dimensions. Creates an event timeline for end-to-end traceability and faster root-cause diagnosis across the chain.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EXAMPLES ===== -->
+  <section class="examples-section" id="examples">
+    <div class="container">
+      <div class="fade-in" style="text-align:center; max-width:680px; margin:0 auto 64px;">
+        <span class="section-label">Live Examples</span>
+        <h2 class="section-title">See SynchroTower in Action</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Interactive visualizations showing how the control tower transforms data into actionable insights. Click to explore detailed views.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; margin-top: 48px;">
+        <!-- Forecast Preview -->
+        <a href="forecast.html" class="example-card fade-in" style="text-decoration: none; color: inherit; display: block;">
+          <div class="example-header">
+            <div class="example-title">
+              <div class="example-icon">📈</div>
+              <div>
+                <div>SKU Forecast Analysis</div>
+                <div class="example-subtitle">7-Day demand forecast with safety stock & stockout risk</div>
+              </div>
+            </div>
+          </div>
+          <div style="background: linear-gradient(135deg, var(--blue-50), var(--white)); padding: 24px; border-radius: 12px; margin-top: 20px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+            <div style="text-align: center; color: var(--slate-600);">
+              <div style="font-size: 2rem; margin-bottom: 12px;">📊</div>
+              <div style="font-weight: 600; margin-bottom: 8px;">Interactive Forecast Chart</div>
+              <div style="font-size: 0.85rem;">View detailed 7-day forecast with uncertainty bands, safety stock levels, and AI-generated insights</div>
+            </div>
+          </div>
+          <div style="margin-top: 20px; text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--blue-600); font-weight: 600; font-size: 0.9rem;">
+              View Full Analysis <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Capacity Preview -->
+        <a href="capacity.html" class="example-card fade-in fade-in-delay-1" style="text-decoration: none; color: inherit; display: block;">
+          <div class="example-header">
+            <div class="example-title">
+              <div class="example-icon">🏗️</div>
+              <div>
+                <div>Warehouse Capacity Forecast</div>
+                <div class="example-subtitle">14-day space utilization by zone with overflow detection</div>
+              </div>
+            </div>
+          </div>
+          <div style="background: linear-gradient(135deg, var(--blue-50), var(--white)); padding: 24px; border-radius: 12px; margin-top: 20px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+            <div style="text-align: center; color: var(--slate-600);">
+              <div style="font-size: 2rem; margin-bottom: 12px;">📊</div>
+              <div style="font-weight: 600; margin-bottom: 8px;">Stacked Area Chart</div>
+              <div style="font-size: 0.85rem;">Explore 14-day capacity forecast with zone breakdown and overflow risk alerts</div>
+            </div>
+          </div>
+          <div style="margin-top: 20px; text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--blue-600); font-weight: 600; font-size: 0.9rem;">
+              View Full Analysis <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Recommendation Preview -->
+        <a href="recommendation.html" class="example-card fade-in fade-in-delay-2" style="text-decoration: none; color: inherit; display: block;">
+          <div class="example-header">
+            <div class="example-title">
+              <div class="example-icon">💡</div>
+              <div>
+                <div>AI Recommendation Card</div>
+                <div class="example-subtitle">Actionable insights with root cause analysis</div>
+              </div>
+            </div>
+          </div>
+          <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b; padding: 24px; border-radius: 12px; margin-top: 20px; min-height: 200px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: #ef4444; color: white; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; margin-bottom: 16px;">
+              <span>⚠️</span> Stockout Risk
+            </div>
+            <div style="color: var(--slate-800); line-height: 1.6;">
+              <div style="font-weight: 700; margin-bottom: 8px; color: #92400e;">CASE-2026-0427</div>
+              <div style="font-size: 0.9rem; margin-bottom: 12px;">B2C demand spike for SKU-1042. Inventory will drop below safety stock by Day 3.</div>
+              <div style="font-size: 0.85rem; color: var(--slate-600);">
+                <div style="margin-bottom: 4px;">✅ 3 Recommended Actions</div>
+                <div>📊 Expected Impact: $12.5K revenue protected</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 20px; text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--blue-600); font-weight: 600; font-size: 0.9rem;">
+              View Full Card <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
   </section>
@@ -1608,323 +2058,4 @@
           <h4>Solution Architect</h4>
           <p>Scalable system design, cloud infrastructure, and integration patterns</p>
         </div>
-        <div class="team-role fade-in fade-in-delay-4">
-          <div class="team-role-icon">🎨</div>
-          <h4>Dashboard Developer</h4>
-          <p>Control tower interface, data visualization, and user experience</p>
-        </div>
-        <div class="team-role fade-in">
-          <div class="team-role-icon">🔐</div>
-          <h4>Security & Governance</h4>
-          <p>Secure-by-design implementation, PDPO compliance, and audit trails</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== CTA ===== -->
-  <section class="cta-section" id="cta">
-    <div class="container">
-      <h2 class="fade-in">Ready to Transform<br>Warehouse Operations?</h2>
-      <p class="fade-in fade-in-delay-1">SynchroTower brings real-time visibility, AI-powered insights, and cross-functional coordination to the B2B2C warehouse.</p>
-      <div class="cta-buttons fade-in fade-in-delay-2">
-        <a href="#hero" class="btn-white">
-          Back to Top
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M4 7l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <a href="#solution" class="btn-outline-white">
-          Review Solution
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <h3>SynchroTower</h3>
-          <p>A centralized, real-time control tower backed by a data middle platform and AI decision engine — designed for the IoT Data Hackathon 2026.</p>
-        </div>
-        <div class="footer-col">
-          <h4>Solution</h4>
-          <a href="#solution">Overview</a>
-          <a href="#features">AI Modules</a>
-          <a href="#data">Data Sources</a>
-          <a href="#security">Security</a>
-        </div>
-        <div class="footer-col">
-          <h4>Impact</h4>
-          <a href="#metrics">Success Metrics</a>
-          <a href="#benefits">Benefits</a>
-          <a href="#timeline">Roadmap</a>
-        </div>
-        <div class="footer-col">
-          <h4>Resources</h4>
-          <a href="https://www.hko.gov.hk/en/abouthko/opendata_intro.htm" target="_blank">HKO Open Data</a>
-          <a href="https://data.gov.hk/" target="_blank">DATA.GOV.HK</a>
-          <a href="#team">Team</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <span>© 2026 SynchroTower — IoT Data Hackathon</span>
-        <div class="footer-links">
-          <a href="#">AS Watson Industries</a>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ===== JAVASCRIPT ===== -->
-  <script>
-    // Navbar scroll effect
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 20);
-    });
-
-    // Mobile menu toggle
-    const mobileBtn = document.getElementById('mobileMenuBtn');
-    const navLinks = document.querySelector('.nav-links');
-    let menuOpen = false;
-    mobileBtn.addEventListener('click', () => {
-      menuOpen = !menuOpen;
-      navLinks.style.display = menuOpen ? 'flex' : '';
-      if (menuOpen) {
-        navLinks.style.cssText = `
-          display:flex; flex-direction:column; position:absolute;
-          top:72px; left:0; right:0; background:rgba(250,251,255,0.98);
-          padding:16px 24px; box-shadow:0 8px 30px rgba(0,0,0,0.1);
-          backdrop-filter:blur(20px); border-bottom:1px solid var(--blue-100);
-        `;
-      } else {
-        navLinks.style.cssText = '';
-      }
-    });
-
-    // Scroll animations
-    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, observerOptions);
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    // Animated KPI counters
-    const kpiObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          const target = parseInt(el.dataset.target);
-          const suffix = el.dataset.suffix || '';
-          let current = 0;
-          const duration = 1500;
-          const step = target / (duration / 16);
-          const timer = setInterval(() => {
-            current += step;
-            if (current >= target) {
-              current = target;
-              clearInterval(timer);
-            }
-            el.textContent = Math.round(current) + suffix;
-          }, 16);
-          kpiObserver.unobserve(el);
-        }
-      });
-    }, { threshold: 0.5 });
-    document.querySelectorAll('.kpi-number').forEach(el => kpiObserver.observe(el));
-
-    // Generate demand chart bars
-    const demandChart = document.getElementById('demandChart');
-    const b2bData = [45, 52, 48, 55, 50, 53, 47];
-    const b2cData = [65, 78, 72, 85, 90, 82, 70];
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const maxVal = Math.max(...b2bData, ...b2cData);
-
-    days.forEach((day, i) => {
-      const group = document.createElement('div');
-      group.style.cssText = 'flex:1; display:flex; gap:3px; align-items:flex-end; position:relative;';
-
-      const b2bBar = document.createElement('div');
-      b2bBar.className = 'chart-bar b2b';
-      b2bBar.style.height = '0%';
-      b2bBar.style.flex = '1';
-      setTimeout(() => { b2bBar.style.height = (b2bData[i] / maxVal * 100) + '%'; }, 300 + i * 80);
-
-      const b2cBar = document.createElement('div');
-      b2cBar.className = 'chart-bar b2c';
-      b2cBar.style.height = '0%';
-      b2cBar.style.flex = '1';
-      setTimeout(() => { b2cBar.style.height = (b2cData[i] / maxVal * 100) + '%'; }, 350 + i * 80);
-
-      group.appendChild(b2bBar);
-      group.appendChild(b2cBar);
-
-      const label = document.createElement('div');
-      label.style.cssText = 'position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-size:0.6rem; color:rgba(255,255,255,0.4);';
-      label.textContent = day;
-      group.appendChild(label);
-
-      demandChart.appendChild(group);
-    });
-
-    // ===== ERD RELATIONSHIP LINES =====
-    function drawERDLines() {
-      const svg = document.getElementById('erdLines');
-      const canvas = document.getElementById('erdCanvas');
-      if (!svg || !canvas) return;
-
-      const canvasRect = canvas.getBoundingClientRect();
-      svg.innerHTML = '';
-
-      // Define marker arrowheads
-      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-
-      // Crow's-foot "many" marker
-      const markerMany = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-      markerMany.setAttribute('id', 'crowfoot');
-      markerMany.setAttribute('viewBox', '0 0 12 12');
-      markerMany.setAttribute('refX', '12');
-      markerMany.setAttribute('refY', '6');
-      markerMany.setAttribute('markerWidth', '10');
-      markerMany.setAttribute('markerHeight', '10');
-      markerMany.setAttribute('orient', 'auto-start-reverse');
-      markerMany.innerHTML = '<path d="M0,6 L12,0 M0,6 L12,12 M0,6 L12,6" stroke="#93c5fd" stroke-width="1.5" fill="none"/>';
-      defs.appendChild(markerMany);
-
-      // One marker (single line)
-      const markerOne = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-      markerOne.setAttribute('id', 'onemark');
-      markerOne.setAttribute('viewBox', '0 0 12 12');
-      markerOne.setAttribute('refX', '0');
-      markerOne.setAttribute('refY', '6');
-      markerOne.setAttribute('markerWidth', '8');
-      markerOne.setAttribute('markerHeight', '8');
-      markerOne.setAttribute('orient', 'auto-start-reverse');
-      markerOne.innerHTML = '<line x1="4" y1="0" x2="4" y2="12" stroke="#93c5fd" stroke-width="2"/>';
-      defs.appendChild(markerOne);
-
-      // Dot marker for references
-      const markerDot = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-      markerDot.setAttribute('id', 'dotmark');
-      markerDot.setAttribute('viewBox', '0 0 10 10');
-      markerDot.setAttribute('refX', '5');
-      markerDot.setAttribute('refY', '5');
-      markerDot.setAttribute('markerWidth', '6');
-      markerDot.setAttribute('markerHeight', '6');
-      markerDot.innerHTML = '<circle cx="5" cy="5" r="4" fill="#93c5fd"/>';
-      defs.appendChild(markerDot);
-
-      svg.appendChild(defs);
-
-      function getEntityCenter(id) {
-        const el = document.getElementById(id);
-        if (!el) return { x: 0, y: 0 };
-        return {
-          x: el.offsetLeft + el.offsetWidth / 2,
-          y: el.offsetTop + el.offsetHeight / 2,
-          top: el.offsetTop,
-          bottom: el.offsetTop + el.offsetHeight,
-          left: el.offsetLeft,
-          right: el.offsetLeft + el.offsetWidth,
-          w: el.offsetWidth,
-          h: el.offsetHeight
-        };
-      }
-
-      function drawPath(fromId, toId, fromSide, toSide, dashed) {
-        const from = getEntityCenter(fromId);
-        const to = getEntityCenter(toId);
-
-        let x1, y1, x2, y2;
-
-        // Calculate connection points based on sides
-        if (fromSide === 'bottom') { x1 = from.x; y1 = from.bottom; }
-        else if (fromSide === 'right') { x1 = from.right; y1 = from.y; }
-        else if (fromSide === 'left') { x1 = from.left; y1 = from.y; }
-        else { x1 = from.x; y1 = from.top; }
-
-        if (toSide === 'top') { x2 = to.x; y2 = to.top; }
-        else if (toSide === 'left') { x2 = to.left; y2 = to.y; }
-        else if (toSide === 'right') { x2 = to.right; y2 = to.y; }
-        else { x2 = to.x; y2 = to.bottom; }
-
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-
-        // Create smooth curved paths
-        const midX = (x1 + x2) / 2;
-        const midY = (y1 + y2) / 2;
-        let d;
-
-        if (fromSide === 'bottom' && toSide === 'top') {
-          d = `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
-        } else if (fromSide === 'right' && toSide === 'left') {
-          d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
-        } else if (fromSide === 'left' && toSide === 'top') {
-          d = `M ${x1} ${y1} C ${x1 - 40} ${y1}, ${x2} ${y2 - 40}, ${x2} ${y2}`;
-        } else if (fromSide === 'bottom' && toSide === 'left') {
-          d = `M ${x1} ${y1} C ${x1} ${y2}, ${x2 - 20} ${y2}, ${x2} ${y2}`;
-        } else {
-          d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
-        }
-
-        path.setAttribute('d', d);
-        path.setAttribute('marker-end', 'url(#crowfoot)');
-        path.setAttribute('marker-start', 'url(#dotmark)');
-
-        if (dashed) {
-          path.setAttribute('stroke-dasharray', '6 4');
-          path.setAttribute('stroke', '#bfdbfe');
-        }
-
-        svg.appendChild(path);
-      }
-
-      // Relationships:
-      // SKU Master → Pack Size (1:M)
-      drawPath('erd-sku', 'erd-pack', 'right', 'left', false);
-      // SKU Master → PO (1:M)
-      drawPath('erd-sku', 'erd-po', 'bottom', 'top', false);
-      // SKU Master → Production Order (1:M)
-      drawPath('erd-sku', 'erd-prod', 'bottom', 'top', false);
-      // SKU Master → Inventory Position (1:M)
-      drawPath('erd-sku', 'erd-inv', 'bottom', 'top', false);
-      // Pack Size → Inventory Position (ref)
-      drawPath('erd-pack', 'erd-inv', 'bottom', 'right', true);
-      // Inventory → Warehouse Events (1:M)
-      drawPath('erd-inv', 'erd-whe', 'bottom', 'top', false);
-      // PO → Shipment Plan (1:M)
-      drawPath('erd-po', 'erd-ship', 'bottom', 'top', false);
-      // SKU → Shipment Plan (ref)
-      drawPath('erd-inv', 'erd-ship', 'bottom', 'top', true);
-    }
-
-    // Draw on load and resize
-    window.addEventListener('load', drawERDLines);
-    window.addEventListener('resize', drawERDLines);
-
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Close mobile menu if open
-          if (menuOpen) {
-            menuOpen = false;
-            navLinks.style.cssText = '';
-          }
-        }
-      });
-    });
-  </script>
-</body>
-</html>
+     
