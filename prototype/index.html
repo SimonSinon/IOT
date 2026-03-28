@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SynchroTower Prototype — GitHub Pages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/site.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="logo-row">
+        <div class="logo-icon">🗼</div>
+        <div>
+          <div class="logo-name">SynchroTower</div>
+          <div class="logo-sub">Full Prototype · GitHub Pages</div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-lbl">Dashboards</div>
+      <a class="nav-item active module-nav" data-module="executive" href="#"><span class="nav-icon">📊</span>Executive Overview</a>
+      <a class="nav-item module-nav" data-module="procurement" href="#"><span class="nav-icon">📦</span>Procurement</a>
+      <a class="nav-item module-nav" data-module="warehouse" href="#"><span class="nav-icon">🏭</span>Warehouse Manager</a>
+      <a class="nav-item module-nav" data-module="production" href="#"><span class="nav-icon">⚙️</span>Production Planner</a>
+    </div>
+    <div class="sb-section">
+      <div class="sb-lbl">AI & Analysis</div>
+      <a class="nav-item module-nav" data-module="recommendations" href="#"><span class="nav-icon">🤖</span>AI Recommendations</a>
+      <a class="nav-item module-nav" data-module="ai_agent" href="#"><span class="nav-icon">🧠</span>AI Agent Ops</a>
+      <a class="nav-item module-nav" data-module="demand" href="#"><span class="nav-icon">📈</span>Demand Intelligence</a>
+      <a class="nav-item module-nav" data-module="safety" href="#"><span class="nav-icon">📐</span>Safety Stock</a>
+      <a class="nav-item module-nav" data-module="sku" href="#"><span class="nav-icon">🗂️</span>SKU Master</a>
+    </div>
+    <div class="sb-bottom">
+      <div class="alert-box">
+        <div class="mini-label">Public Demo URL</div>
+        <div class="alert-num">24/7</div>
+        <div class="alert-lbl">Visitor access</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <span class="topbar-title" id="module-title">Executive Overview</span>
+      <div class="tb-right">
+        <div class="weather-chip">🌡 32°C · HKO Alert</div>
+        <span class="date-lbl" id="topbar-date"></span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="insight-bar">
+        <span class="ib-icon">✨</span>
+        <span class="ib-text"><strong>Public prototype:</strong> This static site demonstrates the full SynchroTower concept (all modules) with interactive mock data for judges and visitors.</span>
+      </div>
+
+      <section class="module active" id="module-executive">
+        <div class="sec-hd"><div><div class="sec-title">Executive Overview</div><div class="sec-sub">Portfolio health, risk posture, and demand signals</div></div></div>
+        <div class="grid-4" id="executive-kpis"></div>
+        <div class="grid-4" id="executive-kpis-row2"></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">Demand Trend (B2B vs B2C)</div></div><div class="card-bd"><div class="ch"><canvas id="chart-exec-demand"></canvas></div></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">Exceptions by Type</div></div><div class="card-bd"><div class="ch"><canvas id="chart-exec-exceptions"></canvas></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Top Stockout Risks</div><div class="card-sub">Below safety stock threshold</div></div>
+          <div class="card-bd">
+            <table class="tbl">
+              <thead><tr><th>SKU</th><th>Category</th><th>Coverage</th><th>Risk</th></tr></thead>
+              <tbody id="exec-risk-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="module-procurement">
+        <div class="sec-hd"><div><div class="sec-title">Procurement Control</div><div class="sec-sub">PO pipeline, supplier OTD, stockout risks</div></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">PO Pipeline</div></div><div class="card-bd" id="po-pipeline"></div></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">Stockout Risk Table</div></div><div class="card-bd"><table class="tbl"><thead><tr><th>SKU</th><th>Coverage</th><th>Days</th><th>Risk</th></tr></thead><tbody id="proc-risk-table"></tbody></table></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">Supplier OTD</div></div><div class="card-bd"><div class="ch"><canvas id="chart-proc-otd"></canvas></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Safety Stock Gap Analysis</div><div class="card-sub">Actual SS vs model recommendation</div></div>
+          <div class="card-bd">
+            <table class="tbl">
+              <thead><tr><th>SKU</th><th>On-Hand</th><th>Actual SS</th><th>Recommended SS</th><th>Gap</th><th>Action</th></tr></thead>
+              <tbody id="proc-gap-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="module-warehouse">
+        <div class="sec-hd"><div><div class="sec-title">Warehouse Manager</div><div class="sec-sub">Zone utilization and throughput</div></div></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">Zone Utilization</div></div><div class="card-bd" id="warehouse-zones"></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">14-Day Forecast</div></div><div class="card-bd"><div class="ch"><canvas id="chart-wh-forecast"></canvas></div></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">Inbound Backlog</div></div><div class="card-bd" id="warehouse-backlog"></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">Slotting Recommendations</div></div><div class="card-bd" id="warehouse-slotting"></div></div>
+        </div>
+      </section>
+
+      <section class="module" id="module-production">
+        <div class="sec-hd"><div><div class="sec-title">Production Planner</div><div class="sec-sub">Line load and priority queue</div></div></div>
+        <div class="grid-4" id="production-kpis"></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">SKU Priority Queue</div></div><div class="card-bd"><table class="tbl"><thead><tr><th>P</th><th>SKU</th><th>Days</th><th>Coverage</th></tr></thead><tbody id="prod-priority-table"></tbody></table></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">Line Capacity</div></div><div class="card-bd"><div class="ch"><canvas id="chart-prod-lines"></canvas></div></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">Inventory Drawdown Forecast</div></div><div class="card-bd"><div class="ch"><canvas id="chart-prod-drawdown"></canvas></div></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">Component Availability</div></div><div class="card-bd" id="prod-components"></div></div>
+        </div>
+      </section>
+
+      <section class="module" id="module-recommendations">
+        <div class="sec-hd"><div><div class="sec-title">🤖 AI Recommendations</div><div class="sec-sub">Approve/defer actions with audit intent</div></div><div class="row" id="severity-summary"></div></div>
+        <div class="grid-2">
+          <div id="rec-col-left"></div>
+          <div id="rec-col-right"></div>
+        </div>
+      </section>
+
+      <section class="module" id="module-ai_agent">
+        <div class="sec-hd"><div><div class="sec-title">🧠 AI Agent Ops</div><div class="sec-sub">Email detection to automated decision</div></div><div class="row"><button class="btn btn-pri" id="simulate-btn">Simulate New Email</button></div></div>
+        <div class="grid-4" id="stats-grid"></div>
+        <div class="agent-grid">
+          <div class="stack">
+            <div class="card"><div class="card-hd"><div><div class="card-title">Live Email Intake</div></div><span class="pill" id="email-urgency-pill">No email</span></div><div class="card-bd"><div class="email-box" id="email-preview"></div></div></div>
+            <div class="card"><div class="card-hd"><div><div class="card-title">AI Decision Engine</div></div><span class="pill" id="policy-outcome-pill">Pending</span></div><div class="card-bd" id="analysis-panel"></div></div>
+          </div>
+          <div class="stack">
+            <div class="card"><div class="card-hd"><div><div class="card-title">Recent Agent Activity</div></div></div><div class="card-bd timeline" id="activity-feed"></div></div>
+            <div class="card"><div class="card-hd"><div><div class="card-title">Rulebook Snapshot</div></div></div><div class="card-bd" id="rules-list"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module" id="module-demand">
+        <div class="sec-hd"><div><div class="sec-title">Demand Intelligence</div><div class="sec-sub">History + forecast + safety stock view</div></div></div>
+        <div class="row mb12">
+          <button class="btn btn-ghost btn-sm" id="demand-overall-btn">Overall</button>
+          <button class="btn btn-ghost btn-sm" id="demand-category-btn">By Category</button>
+          <button class="btn btn-ghost btn-sm" id="demand-sku-btn">By SKU</button>
+        </div>
+        <div class="card"><div class="card-hd"><div class="card-title">Demand and Inventory</div></div><div class="card-bd"><div class="ch-tall"><canvas id="chart-demand-intel"></canvas></div></div></div>
+        <div class="grid-4" id="demand-metrics"></div>
+      </section>
+
+      <section class="module" id="module-safety">
+        <div class="sec-hd"><div><div class="sec-title">Safety Stock Calculator</div><div class="sec-sub">Dynamic formula simulation</div></div></div>
+        <div class="formula-box"><div class="formula-eq">SS = Z × √( LT × σ_demand² + D_mean² × σ_LT² )</div><div class="formula-desc">B2C default Z=2.33 (99% SL), B2B default Z=1.65 (95% SL), with risk-based adjustments.</div></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">Interactive Inputs</div></div><div class="card-bd"><div class="row"><button class="btn btn-pri btn-sm" id="b2c-btn">B2C</button><button class="btn btn-ghost btn-sm" id="b2b-btn">B2B</button></div><div style="margin-top:12px"><label class="lbl">Demand Std Dev: <span id="sigma-val">120</span></label><input type="range" min="20" max="300" value="120" id="sigma-range"></div><div class="result" id="ss-result">Recommended Safety Stock: 280</div></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">Sensitivity vs Lead Time</div></div><div class="card-bd"><div class="ch"><canvas id="chart-ss-sensitivity"></canvas></div></div></div>
+        </div>
+        <div class="card"><div class="card-hd"><div class="card-title">Real SKU Safety Stock Comparison</div></div><div class="card-bd"><table class="tbl"><thead><tr><th>SKU</th><th>Channel</th><th>On-Hand</th><th>Actual SS</th><th>Model SS</th><th>Coverage</th></tr></thead><tbody id="safety-table"></tbody></table></div></div>
+      </section>
+
+      <section class="module" id="module-sku">
+        <div class="sec-hd"><div><div class="sec-title">SKU Master</div><div class="sec-sub">Sample extract and category distribution</div></div></div>
+        <div class="row mb12"><input id="sku-search" class="search" type="text" placeholder="Search SKU or category..."></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div class="card-title">SKU Table</div></div><div class="card-bd"><table class="tbl"><thead><tr><th>SKU</th><th>Category</th><th>Storage</th><th>Channel</th></tr></thead><tbody id="sku-table"></tbody></table></div></div>
+          <div class="card"><div class="card-hd"><div class="card-title">Category Mix</div></div><div class="card-bd"><div class="ch"><canvas id="chart-sku-mix"></canvas></div></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="./assets/app.js"></script>
+</body>
+</html>
